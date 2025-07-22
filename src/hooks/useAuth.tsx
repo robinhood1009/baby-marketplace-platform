@@ -26,14 +26,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle redirect after sign up confirmation
+        // Handle redirect after sign in
         if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(async () => {
-            const { data: profile } = await supabase
+            const { data: profile, error } = await supabase
               .from('profiles')
               .select('role, baby_age')
               .eq('user_id', session.user.id)
               .maybeSingle();
+            
+            if (error) {
+              console.error('Error fetching profile:', error);
+              return;
+            }
             
             if (profile) {
               if (profile.role === 'mother' && !profile.baby_age) {
@@ -43,6 +48,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               } else if (profile.role === 'vendor') {
                 window.location.href = '/vendor-dashboard';
               }
+            } else {
+              // No profile found - redirect to home for now
+              console.warn('No profile found for user, redirecting to home');
+              window.location.href = '/';
             }
           }, 100);
         }
