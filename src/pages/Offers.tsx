@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { Filter, ExternalLink, Star, X } from 'lucide-react';
+import { Filter, ExternalLink, Star, X, Heart, Bookmark } from 'lucide-react';
 
 interface Offer {
   id: string;
@@ -22,12 +23,14 @@ interface Offer {
 
 const Offers = () => {
   const { signOut, user } = useAuth();
+  const navigate = useNavigate();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   // Available filter options
   const ageRanges = ['0-6 months', '6-12 months', '12-36 months', '0-24 months', '3-18 months', '18-36 months'];
@@ -35,7 +38,28 @@ const Offers = () => {
 
   useEffect(() => {
     fetchOffers();
-  }, [selectedAgeRange, selectedCategory]);
+    if (user) {
+      fetchFavorites();
+    }
+  }, [selectedAgeRange, selectedCategory, user]);
+
+  const fetchFavorites = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('favorites')
+        .select('offer_id')
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      
+      const favoriteIds = new Set(data.map(fav => fav.offer_id));
+      setFavorites(favoriteIds);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  };
 
   const fetchOffers = async () => {
     setLoading(true);
@@ -94,6 +118,46 @@ const Offers = () => {
     }
   };
 
+  const toggleFavorite = async (e: React.MouseEvent, offerId: string) => {
+    e.stopPropagation(); // Prevent card click
+    
+    if (!user) {
+      // Optional: Show toast to sign in
+      return;
+    }
+
+    const isFavorite = favorites.has(offerId);
+    
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        await supabase
+          .from('favorites')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('offer_id', offerId);
+        
+        setFavorites(prev => {
+          const newFavorites = new Set(prev);
+          newFavorites.delete(offerId);
+          return newFavorites;
+        });
+      } else {
+        // Add to favorites
+        await supabase
+          .from('favorites')
+          .insert({
+            user_id: user.id,
+            offer_id: offerId
+          });
+        
+        setFavorites(prev => new Set([...prev, offerId]));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-green-50/50">
       <div className="max-w-7xl mx-auto p-6">
@@ -107,11 +171,23 @@ const Offers = () => {
               Discover amazing products for your little one
             </p>
           </div>
-          {user && (
-            <Button onClick={signOut} variant="outline" className="border-[#9EB6CF] hover:bg-[#9EB6CF]/10">
-              Sign Out
-            </Button>
-          )}
+          <div className="flex gap-3">
+            {user && (
+              <Button 
+                onClick={() => navigate('/saved-offers')} 
+                variant="outline" 
+                className="border-[#9EB6CF] hover:bg-[#9EB6CF]/10 flex items-center gap-2"
+              >
+                <Heart className="h-4 w-4" />
+                Saved Offers ({favorites.size})
+              </Button>
+            )}
+            {user && (
+              <Button onClick={signOut} variant="outline" className="border-[#9EB6CF] hover:bg-[#9EB6CF]/10">
+                Sign Out
+              </Button>
+            )}
+          </div>
         </header>
 
         {/* Filters */}
@@ -208,6 +284,21 @@ const Offers = () => {
                         Featured
                       </Badge>
                     </div>
+                  )}
+                  {/* Heart Icon for Favorites */}
+                  {user && (
+                    <button
+                      onClick={(e) => toggleFavorite(e, offer.id)}
+                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110"
+                    >
+                      <Heart 
+                        className={`h-5 w-5 transition-all duration-300 ${
+                          favorites.has(offer.id) 
+                            ? 'fill-red-500 text-red-500 animate-heartbeat' 
+                            : 'text-gray-400 hover:text-red-400'
+                        }`}
+                      />
+                    </button>
                   )}
                 </div>
                 

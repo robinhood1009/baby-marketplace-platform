@@ -191,6 +191,24 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @layer utilities {
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
@@ -198,5 +216,9 @@ All colors MUST be HSL.
   
   .animate-pulse-subtle {
     animation: pulse-subtle 2s infinite;
+  }
+  
+  .animate-heartbeat {
+    animation: heartbeat 0.6s ease-in-out;
   }
 }
