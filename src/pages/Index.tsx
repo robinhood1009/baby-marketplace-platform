@@ -164,12 +164,40 @@ const Index = () => {
                   {item.label}
                 </button>
               ))}
-              <Button
-                onClick={() => navigate('/auth')}
-                className="bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
-              >
-                Login
-              </Button>
+              
+              {/* Login Dropdown */}
+              <div className="relative group">
+                <Button
+                  className="bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
+                >
+                  Join / Login
+                </Button>
+                
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-2">
+                    <button
+                      onClick={() => navigate('/auth?role=mother')}
+                      className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
+                    >
+                      Join as Mom
+                    </button>
+                    <button
+                      onClick={() => navigate('/auth?role=vendor')}
+                      className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
+                    >
+                      Join as Vendor
+                    </button>
+                    <div className="border-t my-1"></div>
+                    <button
+                      onClick={() => navigate('/auth?role=admin')}
+                      className="block w-full px-4 py-2 text-left text-gray-500 hover:bg-gray-50 transition-colors text-xs"
+                    >
+                      Admin Login
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Mobile menu button */}
@@ -196,12 +224,29 @@ const Index = () => {
                     {item.label}
                   </button>
                 ))}
-                <Button
-                  onClick={() => navigate('/auth')}
-                  className="w-full mt-2 bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
-                >
-                  Login
-                </Button>
+                
+                {/* Mobile Login Options */}
+                <div className="pt-2 border-t">
+                  <Button
+                    onClick={() => navigate('/auth?role=mother')}
+                    className="w-full mb-2 bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
+                  >
+                    Join as Mom
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/auth?role=vendor')}
+                    variant="outline"
+                    className="w-full mb-2 border-[#9CD2C3] text-[#9CD2C3] hover:bg-[#9CD2C3] hover:text-white"
+                  >
+                    Join as Vendor
+                  </Button>
+                  <button
+                    onClick={() => navigate('/auth?role=admin')}
+                    className="block w-full text-left px-3 py-2 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Admin Login
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -228,14 +273,33 @@ const Index = () => {
                 >
                   View This Week's Deals
                 </Button>
-                <Button 
-                  onClick={() => navigate('/auth')} 
-                  variant="outline" 
-                  className="border-[#9CD2C3] text-[#9CD2C3] hover:bg-[#9CD2C3] hover:text-white px-8 py-3 text-lg font-semibold"
-                  size="lg"
-                >
-                  Join Free
-                </Button>
+                <div className="relative group">
+                  <Button 
+                    variant="outline" 
+                    className="border-[#9CD2C3] text-[#9CD2C3] hover:bg-[#9CD2C3] hover:text-white px-8 py-3 text-lg font-semibold"
+                    size="lg"
+                  >
+                    Join Free
+                  </Button>
+                  
+                  {/* Hero Join Dropdown */}
+                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-2">
+                      <button
+                        onClick={() => navigate('/auth?role=mother')}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
+                      >
+                        Join as Mom
+                      </button>
+                      <button
+                        onClick={() => navigate('/auth?role=vendor')}
+                        className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
+                      >
+                        Join as Vendor
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
