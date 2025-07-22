@@ -37,7 +37,7 @@ const Auth = () => {
 
     try {
       if (isAdminLogin) {
-        // Admin login - only allow sign in, no sign up
+        // Admin login - check if admin exists, if not, create account
         if (email !== 'admin@yourdomain.com') {
           toast({
             title: "Access Denied",
@@ -49,11 +49,20 @@ const Auth = () => {
         
         const { error } = await signIn(email, password);
         if (error) {
-          toast({
-            title: "Admin login failed",
-            description: error.message,
-            variant: "destructive"
-          });
+          // If admin doesn't exist, show helpful message
+          if (error.message.includes('Invalid login credentials')) {
+            toast({
+              title: "Admin account not found",
+              description: "Please create the admin account first through Supabase dashboard or contact system administrator.",
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "Admin login failed",
+              description: error.message,
+              variant: "destructive"
+            });
+          }
         }
       } else if (isSignUp) {
         const { error } = await signUp(email, password, role);
