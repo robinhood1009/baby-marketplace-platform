@@ -144,7 +144,7 @@ const Index = () => {
         
         <Button 
           onClick={() => handleOfferClick(offer.affiliate_link)}
-          className="w-full bg-secondary hover:bg-secondary/90 text-white font-semibold rounded-lg hover:scale-105 transition-transform"
+          className="w-full bg-secondary hover:bg-secondary/90 text-gray-800 font-semibold rounded-lg hover:scale-105 transition-transform"
           disabled={!offer.affiliate_link}
         >
           Claim Now
