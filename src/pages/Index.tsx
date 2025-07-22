@@ -19,7 +19,8 @@ import {
   Mail,
   Phone,
   MapPin,
-  ChevronDown
+  ChevronDown,
+  ExternalLink
 } from 'lucide-react';
 
 const Index = () => {
@@ -33,6 +34,25 @@ const Index = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [featuredOffers, setFeaturedOffers] = useState<any[]>([]);
+
+  // Fetch featured offers
+  useEffect(() => {
+    const fetchFeaturedOffers = async () => {
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('is_featured', true)
+        .eq('status', 'approved')
+        .limit(5);
+      
+      if (data && !error) {
+        setFeaturedOffers(data);
+      }
+    };
+    
+    fetchFeaturedOffers();
+  }, []);
 
   // Handle navbar background on scroll
   useEffect(() => {
@@ -175,98 +195,102 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section 
-        id="home" 
-        className="min-h-screen flex items-center justify-center relative overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #9EB6CF 0%, #9CD2C3 100%)'
-        }}
-      >
-        {/* Animated background images */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img 
-            src="https://images.pexels.com/photos/3933271/pexels-photo-3933271.jpeg" 
-            alt="Mom playing with baby"
-            className="absolute top-[-5rem] left-[-5rem] w-64 h-64 rounded-full object-cover opacity-20 animate-float"
-          />
-          <img 
-            src="https://img.freepik.com/free-photo/blonde-baby-with-towel_23-2147983495.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-            alt="Baby on soft blanket"
-            className="absolute bottom-[-6rem] right-[-4rem] w-72 h-72 rounded-full object-cover opacity-25 animate-zoomIn"
-            style={{ animationDelay: '1s' }}
-          />
-          <img 
-            src="https://images.pexels.com/photos/3845543/pexels-photo-3845543.jpeg" 
-            alt="Parents holding baby feet"
-            className="absolute top-[20%] right-[10%] w-44 h-44 rounded-full object-cover opacity-30 animate-fadeIn"
-            style={{ animationDelay: '1.5s' }}
-          />
-          <img 
-            src="https://img.freepik.com/free-photo/mother-feed-cute-baby-yoghurt-with-spoon_176420-19745.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-            alt="Mom feeding baby"
-            className="absolute bottom-[30%] left-[20%] w-48 h-48 rounded-full object-cover opacity-25 animate-bounce"
-            style={{ animationDelay: '2s' }}
-          />
-          <img 
-            src="https://images.pexels.com/photos/1741231/pexels-photo-1741231.jpeg" 
-            alt="Laughing baby wrapped in blanket"
-            className="absolute top-[50%] left-[5%] w-40 h-40 rounded-full object-cover opacity-20 animate-float"
-            style={{ animationDelay: '2.5s' }}
-          />
-          <img 
-            src="https://images.unsplash.com/photo-1607746882042-944635dfe10e" 
-            alt="Dad holding newborn"
-            className="absolute top-[10%] right-[30%] w-56 h-56 rounded-full object-cover opacity-25 animate-wiggle"
-            style={{ animationDelay: '3s' }}
-          />
-          <img 
-            src="https://images.pexels.com/photos/1170895/pexels-photo-1170895.jpeg" 
-            alt="Baby in white dress"
-            className="absolute bottom-[10%] right-[40%] w-40 h-40 rounded-full object-cover opacity-25 animate-fadeIn"
-            style={{ animationDelay: '3.5s' }}
-          />
-          <img 
-            src="https://images.pexels.com/photos/1648378/pexels-photo-1648378.jpeg" 
-            alt="Close-up baby face"
-            className="absolute bottom-[5%] left-[40%] w-52 h-52 rounded-full object-cover opacity-30 animate-zoomIn"
-            style={{ animationDelay: '4s' }}
-          />
-        </div>
-
-
-
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 animate-fade-in">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Find curated baby offers made for your little one.
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join to receive gifts, trials, and more — all personalized for your baby's age.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => navigate('/auth?role=mother')}
-              size="lg"
-              className="bg-white text-primary hover:bg-white/90 font-semibold py-4 px-8 text-lg hover-scale"
-            >
-              <Heart className="w-5 h-5 mr-2" />
-              I'm a Mother
-            </Button>
-            <Button
-              onClick={() => navigate('/auth?role=vendor')}
-              size="lg"
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary font-semibold py-4 px-8 text-lg hover-scale transition-all duration-200"
-            >
-              <Store className="w-5 h-5 mr-2" />
-              I'm a Vendor
-            </Button>
+      {/* Featured Deals Section */}
+      <section id="home" className="pt-20 pb-16 bg-gradient-to-br from-background to-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
+              This Week's Featured Baby Offers
+            </h1>
+            <p className="text-xl text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              Handpicked deals from trusted brands for your little one
+            </p>
           </div>
-        </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
-          <ChevronDown className="w-6 h-6 text-white/70" />
+          {featuredOffers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
+              {featuredOffers.slice(0, 5).map((offer, index) => (
+                <Card 
+                  key={offer.id} 
+                  className="group overflow-hidden hover-scale transition-all duration-300 hover:shadow-xl animate-fade-in border-2 border-primary/10 hover:border-primary/30"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={offer.image_url || "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=300&fit=crop"}
+                      alt={offer.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {/* Check if there's discount info in title/description and show badge */}
+                    {(offer.title.includes('%') || offer.title.toLowerCase().includes('off') || 
+                      offer.description.includes('%') || offer.description.toLowerCase().includes('off')) && (
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-accent to-accent-foreground text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                        {/* Extract discount from title or show generic */}
+                        {offer.title.match(/\d+%/) ? offer.title.match(/\d+%/)[0] + ' OFF' : 'SALE!'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <CardContent className="p-6">
+                    <h3 className="font-bold text-lg mb-3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                      {offer.title}
+                    </h3>
+                    
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                      {offer.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium capitalize">
+                        {offer.category}
+                      </span>
+                      <span className="inline-block bg-secondary/20 text-secondary-foreground px-3 py-1 rounded-full text-xs font-medium">
+                        {offer.age_range}
+                      </span>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => offer.affiliate_link && window.open(offer.affiliate_link, '_blank')}
+                      className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold py-3 rounded-lg hover-scale shadow-lg"
+                      disabled={!offer.affiliate_link}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Claim Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground text-lg animate-fade-in">
+                No featured offers available at the moment. Check back soon!
+              </p>
+            </div>
+          )}
+
+          {/* CTA Section */}
+          <div className="text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => navigate('/auth?role=mother')}
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-8 text-lg hover-scale"
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                I'm a Mother
+              </Button>
+              <Button
+                onClick={() => navigate('/offers')}
+                size="lg"
+                variant="outline"
+                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-4 px-8 text-lg hover-scale transition-all duration-200"
+              >
+                <Search className="w-5 h-5 mr-2" />
+                Browse All Offers
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
