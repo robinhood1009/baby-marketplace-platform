@@ -191,7 +191,7 @@ const Index = () => {
             className="absolute top-[-5rem] left-[-5rem] w-64 h-64 rounded-full object-cover opacity-20 animate-float"
           />
           <img 
-            src="https://images.unsplash.com/photo-1617791160581-bc733130f1bd" 
+            src="https://img.freepik.com/free-photo/blonde-baby-with-towel_23-2147983495.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
             alt="Baby on soft blanket"
             className="absolute bottom-[-6rem] right-[-4rem] w-72 h-72 rounded-full object-cover opacity-25 animate-zoomIn"
             style={{ animationDelay: '1s' }}
@@ -203,7 +203,7 @@ const Index = () => {
             style={{ animationDelay: '1.5s' }}
           />
           <img 
-            src="https://images.pexels.com/photos/7534991/pexels-photo-7534991.jpeg" 
+            src="https://img.freepik.com/free-photo/mother-feed-cute-baby-yoghurt-with-spoon_176420-19745.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
             alt="Mom feeding baby"
             className="absolute bottom-[30%] left-[20%] w-48 h-48 rounded-full object-cover opacity-25 animate-bounce"
             style={{ animationDelay: '2s' }}
