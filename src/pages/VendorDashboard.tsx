@@ -16,8 +16,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Plus, Eye, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Eye, Clock, CheckCircle, XCircle, Calendar, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { format, differenceInDays, addDays } from 'date-fns';
 
 const offerSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -30,14 +31,24 @@ const offerSchema = z.object({
 
 type OfferFormData = z.infer<typeof offerSchema>;
 
+const adSchema = z.object({
+  start_date: z.string().min(1, 'Start date is required'),
+  end_date: z.string().min(1, 'End date is required')
+});
+
+type AdFormData = z.infer<typeof adSchema>;
+
 const VendorDashboard = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [offers, setOffers] = useState<any[]>([]);
+  const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAdDialogOpen, setIsAdDialogOpen] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const form = useForm<OfferFormData>({
     resolver: zodResolver(offerSchema),
@@ -51,12 +62,34 @@ const VendorDashboard = () => {
     }
   });
 
+  const adForm = useForm<AdFormData>({
+    resolver: zodResolver(adSchema),
+    defaultValues: {
+      start_date: '',
+      end_date: ''
+    }
+  });
+
   useEffect(() => {
     if (user) {
       checkVendorAccess();
       fetchOffers();
+      fetchAds();
     }
   }, [user]);
+
+  // Handle payment success on page load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const sessionId = urlParams.get('session_id');
+
+    if (paymentStatus === 'success' && sessionId) {
+      verifyPayment(sessionId);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const checkVendorAccess = async () => {
     if (!user) {
@@ -66,7 +99,7 @@ const VendorDashboard = () => {
 
     const { data: profileData, error } = await supabase
       .from('profiles')
-      .select('role')
+      .select('*')
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -104,6 +137,26 @@ const VendorDashboard = () => {
     setLoading(false);
   };
 
+  const fetchAds = async () => {
+    if (!user || !profile) return;
+
+    const { data, error } = await supabase
+      .from('ads')
+      .select('*')
+      .eq('vendor_id', profile.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch ads",
+        variant: "destructive"
+      });
+    } else {
+      setAds(data || []);
+    }
+  };
+
   const onSubmit = async (data: OfferFormData) => {
     if (!user) return;
 
@@ -139,6 +192,89 @@ const VendorDashboard = () => {
     }
   };
 
+  const onAdSubmit = async (data: AdFormData) => {
+    if (!user || !profile) return;
+
+    setPaymentLoading(true);
+    try {
+      const startDate = new Date(data.start_date);
+      const endDate = new Date(data.end_date);
+      const days = differenceInDays(endDate, startDate) + 1;
+
+      if (days <= 0) {
+        toast({
+          title: "Invalid Date Range",
+          description: "End date must be after start date",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { data: sessionData, error } = await supabase.functions.invoke('create-ad-payment', {
+        body: {
+          startDate: data.start_date,
+          endDate: data.end_date,
+          days: days
+        }
+      });
+
+      if (error) throw error;
+
+      // Open Stripe checkout in a new tab
+      window.open(sessionData.url, '_blank');
+      
+      setIsAdDialogOpen(false);
+      adForm.reset();
+    } catch (error: any) {
+      toast({
+        title: "Payment Error",
+        description: error.message || "Failed to create payment session",
+        variant: "destructive"
+      });
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
+
+  const verifyPayment = async (sessionId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-ad-payment', {
+        body: { sessionId }
+      });
+
+      if (error) throw error;
+
+      if (data.paid) {
+        toast({
+          title: "Payment Successful!",
+          description: "Your ad has been activated and will appear on the homepage.",
+        });
+        fetchAds();
+      }
+    } catch (error: any) {
+      toast({
+        title: "Payment Verification Error",
+        description: error.message || "Failed to verify payment",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const calculatePrice = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = differenceInDays(end, start) + 1;
+    return Math.max(0, days * 5); // $5 per day
+  };
+
+  const calculateDays = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return Math.max(0, differenceInDays(end, start) + 1);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -149,6 +285,22 @@ const VendorDashboard = () => {
         return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getAdStatusBadge = (ad: any) => {
+    const today = new Date();
+    const startDate = new Date(ad.start_date);
+    const endDate = new Date(ad.end_date);
+
+    if (!ad.paid) {
+      return <Badge variant="destructive">Unpaid</Badge>;
+    } else if (today < startDate) {
+      return <Badge variant="secondary">Scheduled</Badge>;
+    } else if (today >= startDate && today <= endDate) {
+      return <Badge variant="default">Active</Badge>;
+    } else {
+      return <Badge variant="outline">Expired</Badge>;
     }
   };
 
@@ -350,19 +502,114 @@ const VendorDashboard = () => {
           </TabsContent>
           
           <TabsContent value="placements" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">Ad Placements</h2>
+              <Dialog open={isAdDialogOpen} onOpenChange={setIsAdDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="animate-fade-in">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New Ad
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Create Advertisement</DialogTitle>
+                  </DialogHeader>
+                  <Form {...adForm}>
+                    <form onSubmit={adForm.handleSubmit(onAdSubmit)} className="space-y-4">
+                      <FormField
+                        control={adForm.control}
+                        name="start_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Start Date</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={adForm.control}
+                        name="end_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>End Date</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} min={adForm.watch('start_date') || new Date().toISOString().split('T')[0]} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {adForm.watch('start_date') && adForm.watch('end_date') && (
+                        <div className="p-4 bg-muted rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">Duration:</span>
+                            <span className="font-semibold">{calculateDays(adForm.watch('start_date'), adForm.watch('end_date'))} days</span>
+                          </div>
+                          <div className="flex justify-between items-center mt-1">
+                            <span className="text-sm text-muted-foreground">Total Price:</span>
+                            <span className="font-bold text-lg text-primary">${calculatePrice(adForm.watch('start_date'), adForm.watch('end_date'))}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">$5 per day</p>
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-end space-x-2 pt-4">
+                        <Button type="button" variant="outline" onClick={() => setIsAdDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={paymentLoading}>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          {paymentLoading ? 'Processing...' : 'Pay with Stripe'}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+            </div>
+
             <Card className="animate-fade-in">
               <CardHeader>
-                <CardTitle>Ad Placements</CardTitle>
-                <CardDescription>Manage your advertising campaigns</CardDescription>
+                <CardTitle>My Advertisements</CardTitle>
+                <CardDescription>Track your advertising campaigns</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Eye className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Ad Placements Coming Soon</h3>
-                  <p className="text-muted-foreground">
-                    Premium advertising features will be available in a future update.
-                  </p>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Start Date</TableHead>
+                      <TableHead>End Date</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Created</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ads.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                          No advertisements created yet. Create your first ad to get started!
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      ads.map((ad) => (
+                        <TableRow key={ad.id} className="animate-fade-in">
+                          <TableCell>{format(new Date(ad.start_date), 'MMM dd, yyyy')}</TableCell>
+                          <TableCell>{format(new Date(ad.end_date), 'MMM dd, yyyy')}</TableCell>
+                          <TableCell>{differenceInDays(new Date(ad.end_date), new Date(ad.start_date)) + 1} days</TableCell>
+                          <TableCell>{getAdStatusBadge(ad)}</TableCell>
+                          <TableCell>{format(new Date(ad.created_at), 'MMM dd, yyyy')}</TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
