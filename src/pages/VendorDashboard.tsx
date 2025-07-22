@@ -33,7 +33,10 @@ type OfferFormData = z.infer<typeof offerSchema>;
 
 const adSchema = z.object({
   start_date: z.string().min(1, 'Start date is required'),
-  end_date: z.string().min(1, 'End date is required')
+  end_date: z.string().min(1, 'End date is required'),
+  image_url: z.string().min(1, 'Banner image is required'),
+  link_url: z.string().url('Must be a valid URL'),
+  headline: z.string().max(50, 'Headline must be 50 characters or less').optional()
 });
 
 type AdFormData = z.infer<typeof adSchema>;
@@ -66,7 +69,10 @@ const VendorDashboard = () => {
     resolver: zodResolver(adSchema),
     defaultValues: {
       start_date: '',
-      end_date: ''
+      end_date: '',
+      image_url: '',
+      link_url: '',
+      headline: ''
     }
   });
 
@@ -215,11 +221,30 @@ const VendorDashboard = () => {
         return;
       }
 
+      // First save the ad data to the database with paid = false
+      const { data: adData, error: adError } = await supabase
+        .from('ads')
+        .insert({
+          vendor_id: profile.id,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          image_url: data.image_url,
+          link_url: data.link_url,
+          headline: data.headline || null,
+          paid: false
+        })
+        .select()
+        .single();
+
+      if (adError) throw adError;
+
+      // Then create the payment session
       const { data: sessionData, error } = await supabase.functions.invoke('create-ad-payment', {
         body: {
           startDate: data.start_date,
           endDate: data.end_date,
-          days: days
+          days: days,
+          adId: adData.id
         }
       });
 
@@ -230,6 +255,7 @@ const VendorDashboard = () => {
       
       setIsAdDialogOpen(false);
       adForm.reset();
+      fetchAds(); // Refresh the ads list to show the new unpaid ad
     } catch (error: any) {
       toast({
         title: "Payment Error",
@@ -516,40 +542,111 @@ const VendorDashboard = () => {
                     Create New Ad
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Create Advertisement</DialogTitle>
                   </DialogHeader>
                   <Form {...adForm}>
-                    <form onSubmit={adForm.handleSubmit(onAdSubmit)} className="space-y-4">
+                    <form onSubmit={adForm.handleSubmit(onAdSubmit)} className="space-y-6">
+                      {/* Banner Image Upload */}
+                      <div className="space-y-4">
+                        <FormField
+                          control={adForm.control}
+                          name="image_url"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Banner Image*</FormLabel>
+                              <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">
+                                  Upload a horizontal banner image (recommended: 1200x400px)
+                                </p>
+                                <ImageUpload
+                                  onImageUrlChange={(url) => adForm.setValue('image_url', url)}
+                                  currentImageUrl={adForm.watch('image_url')}
+                                  bucketName="ad-banners"
+                                />
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      {/* Link URL */}
                       <FormField
                         control={adForm.control}
-                        name="start_date"
+                        name="link_url"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Start Date</FormLabel>
+                            <FormLabel>Link URL*</FormLabel>
                             <FormControl>
-                              <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
+                              <Input 
+                                placeholder="https://your-website.com/landing-page" 
+                                {...field} 
+                              />
                             </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={adForm.control}
-                        name="end_date"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>End Date</FormLabel>
-                            <FormControl>
-                              <Input type="date" {...field} min={adForm.watch('start_date') || new Date().toISOString().split('T')[0]} />
-                            </FormControl>
+                            <p className="text-sm text-muted-foreground">
+                              Where should users go when they click your ad?
+                            </p>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
 
+                      {/* Headline */}
+                      <FormField
+                        control={adForm.control}
+                        name="headline"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Headline (Optional)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="25% Off Diaper Bundles!" 
+                                maxLength={50}
+                                {...field} 
+                              />
+                            </FormControl>
+                            <p className="text-sm text-muted-foreground">
+                              Short promotional message (max 50 characters)
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Date Fields */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={adForm.control}
+                          name="start_date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Start Date*</FormLabel>
+                              <FormControl>
+                                <Input type="date" {...field} min={new Date().toISOString().split('T')[0]} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={adForm.control}
+                          name="end_date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>End Date*</FormLabel>
+                              <FormControl>
+                                <Input type="date" {...field} min={adForm.watch('start_date') || new Date().toISOString().split('T')[0]} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      {/* Pricing Summary */}
                       {adForm.watch('start_date') && adForm.watch('end_date') && (
                         <div className="p-4 bg-muted rounded-lg">
                           <div className="flex justify-between items-center">
@@ -563,6 +660,30 @@ const VendorDashboard = () => {
                           <p className="text-xs text-muted-foreground mt-2">$5 per day</p>
                         </div>
                       )}
+
+                      {/* Preview Section */}
+                      {adForm.watch('image_url') && adForm.watch('link_url') && (
+                        <div className="space-y-2">
+                          <h4 className="font-medium text-sm">Ad Preview:</h4>
+                          <div className="border rounded-lg p-4 bg-gray-50">
+                            <div className="relative">
+                              <img 
+                                src={adForm.watch('image_url')} 
+                                alt="Ad preview" 
+                                className="w-full h-32 object-cover rounded-md"
+                              />
+                              {adForm.watch('headline') && (
+                                <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
+                                  {adForm.watch('headline')}
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-2">
+                              Clicks to: {adForm.watch('link_url')}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                       
                       <div className="flex justify-end space-x-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsAdDialogOpen(false)}>
@@ -570,7 +691,7 @@ const VendorDashboard = () => {
                         </Button>
                         <Button type="submit" disabled={paymentLoading}>
                           <CreditCard className="w-4 h-4 mr-2" />
-                          {paymentLoading ? 'Processing...' : 'Pay with Stripe'}
+                          {paymentLoading ? 'Processing...' : 'Create Ad & Pay with Stripe'}
                         </Button>
                       </div>
                     </form>
@@ -588,9 +709,9 @@ const VendorDashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Start Date</TableHead>
-                      <TableHead>End Date</TableHead>
+                      <TableHead>Campaign</TableHead>
                       <TableHead>Duration</TableHead>
+                      <TableHead>Link</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Created</TableHead>
                     </TableRow>
@@ -605,9 +726,36 @@ const VendorDashboard = () => {
                     ) : (
                       ads.map((ad) => (
                         <TableRow key={ad.id} className="animate-fade-in">
-                          <TableCell>{format(new Date(ad.start_date), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell>{format(new Date(ad.end_date), 'MMM dd, yyyy')}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              {ad.image_url && (
+                                <img src={ad.image_url} alt="Ad preview" className="w-12 h-8 object-cover rounded border" />
+                              )}
+                              <div>
+                                <div className="font-medium text-sm">
+                                  {ad.headline || 'No headline'}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {format(new Date(ad.start_date), 'MMM dd')} - {format(new Date(ad.end_date), 'MMM dd, yyyy')}
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
                           <TableCell>{differenceInDays(new Date(ad.end_date), new Date(ad.start_date)) + 1} days</TableCell>
+                          <TableCell>
+                            {ad.link_url ? (
+                              <a 
+                                href={ad.link_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 text-sm truncate max-w-32 block"
+                              >
+                                {new URL(ad.link_url).hostname}
+                              </a>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">No link</span>
+                            )}
+                          </TableCell>
                           <TableCell>{getAdStatusBadge(ad)}</TableCell>
                           <TableCell>{format(new Date(ad.created_at), 'MMM dd, yyyy')}</TableCell>
                         </TableRow>
@@ -617,6 +765,82 @@ const VendorDashboard = () => {
                 </Table>
               </CardContent>
             </Card>
+
+            {/* My Ad Previews Section */}
+            {ads.filter(ad => ad.paid && ad.image_url).length > 0 && (
+              <Card className="animate-fade-in">
+                <CardHeader>
+                  <CardTitle>View My Ads</CardTitle>
+                  <CardDescription>Preview how your active ads appear to users</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {ads.filter(ad => ad.paid && ad.image_url).map((ad) => {
+                      const today = new Date();
+                      const startDate = new Date(ad.start_date);
+                      const endDate = new Date(ad.end_date);
+                      const isActive = today >= startDate && today <= endDate;
+                      
+                      return (
+                        <div key={ad.id} className="border rounded-lg overflow-hidden bg-white shadow-sm">
+                          <div className="relative">
+                            <img 
+                              src={ad.image_url} 
+                              alt="Ad banner" 
+                              className="w-full h-32 object-cover"
+                            />
+                            {ad.headline && (
+                              <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-sm font-medium">
+                                {ad.headline}
+                              </div>
+                            )}
+                            <div className="absolute top-2 right-2">
+                              {isActive ? (
+                                <Badge variant="default" className="bg-green-600">Live</Badge>
+                              ) : today < startDate ? (
+                                <Badge variant="secondary">Scheduled</Badge>
+                              ) : (
+                                <Badge variant="outline">Expired</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium">Campaign Period:</span>
+                              <span className="text-sm text-muted-foreground">
+                                {format(new Date(ad.start_date), 'MMM dd')} - {format(new Date(ad.end_date), 'MMM dd, yyyy')}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium">Clicks to:</span>
+                              <a 
+                                href={ad.link_url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 hover:text-blue-800 truncate max-w-48"
+                              >
+                                {ad.link_url}
+                              </a>
+                            </div>
+                            {isActive && (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full mt-2"
+                                onClick={() => window.open(ad.link_url, '_blank')}
+                              >
+                                <Eye className="w-4 h-4 mr-2" />
+                                Test Ad Click
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>

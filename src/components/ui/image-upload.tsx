@@ -13,9 +13,10 @@ interface ImageUploadProps {
   onImageUrlChange: (url: string) => void;
   currentImageUrl?: string;
   className?: string;
+  bucketName?: string; // Optional bucket name, defaults to 'offer-images'
 }
 
-export const ImageUpload = ({ onImageUrlChange, currentImageUrl, className }: ImageUploadProps) => {
+export const ImageUpload = ({ onImageUrlChange, currentImageUrl, className, bucketName = 'offer-images' }: ImageUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState(currentImageUrl || '');
@@ -50,7 +51,7 @@ export const ImageUpload = ({ onImageUrlChange, currentImageUrl, className }: Im
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('offer-images')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (uploadError) {
@@ -58,7 +59,7 @@ export const ImageUpload = ({ onImageUrlChange, currentImageUrl, className }: Im
       }
 
       const { data } = supabase.storage
-        .from('offer-images')
+        .from(bucketName)
         .getPublicUrl(filePath);
 
       const uploadedUrl = data.publicUrl;

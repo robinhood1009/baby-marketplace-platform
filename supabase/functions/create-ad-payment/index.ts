@@ -21,7 +21,7 @@ serve(async (req) => {
     );
 
     // Get the request body
-    const { startDate, endDate, days } = await req.json();
+    const { startDate, endDate, days, adId } = await req.json();
 
     // Retrieve authenticated user
     const authHeader = req.headers.get("Authorization")!;
@@ -71,7 +71,8 @@ serve(async (req) => {
       metadata: {
         start_date: startDate,
         end_date: endDate,
-        user_id: user.id
+        user_id: user.id,
+        ad_id: adId
       }
     });
 

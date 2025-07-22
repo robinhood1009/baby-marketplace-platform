@@ -18,7 +18,10 @@ export type Database = {
         Row: {
           created_at: string
           end_date: string
+          headline: string | null
           id: string
+          image_url: string | null
+          link_url: string | null
           paid: boolean
           start_date: string
           stripe_session_id: string | null
@@ -28,7 +31,10 @@ export type Database = {
         Insert: {
           created_at?: string
           end_date: string
+          headline?: string | null
           id?: string
+          image_url?: string | null
+          link_url?: string | null
           paid?: boolean
           start_date: string
           stripe_session_id?: string | null
@@ -38,7 +44,10 @@ export type Database = {
         Update: {
           created_at?: string
           end_date?: string
+          headline?: string | null
           id?: string
+          image_url?: string | null
+          link_url?: string | null
           paid?: boolean
           start_date?: string
           stripe_session_id?: string | null
