@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      ads: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          paid: boolean
+          start_date: string
+          stripe_session_id: string | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          paid?: boolean
+          start_date: string
+          stripe_session_id?: string | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          paid?: boolean
+          start_date?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ads_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       click_logs: {
         Row: {
           id: string

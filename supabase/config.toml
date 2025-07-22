@@ -1,1 +1,7 @@
 project_id = "ktzqjzuowolzhptvxisi"
+
+[functions.create-ad-payment]
+verify_jwt = false
+
+[functions.verify-ad-payment]
+verify_jwt = false
