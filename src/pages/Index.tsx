@@ -186,7 +186,7 @@ const Index = () => {
         {/* Animated background images */}
         <div className="absolute inset-0 overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400&h=400&fit=crop&crop=face" 
+            src="https://media.sciencephoto.com/image/f0133540/800wm/F0133540-Mother_holding_baby.jpg" 
             alt="Happy diverse mother with baby"
             className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
           />
