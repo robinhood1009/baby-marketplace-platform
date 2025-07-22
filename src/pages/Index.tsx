@@ -211,100 +211,70 @@ const Index = () => {
       {/* Hero Section */}
       <section id="home" className="pt-20 pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 animate-fade-in">
-              This Week's Baby Offers Just for You
-            </h1>
-            <p className="text-xl text-gray-600 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Claim exclusive discounts, free samples, and baby essentials
-            </p>
-          </div>
-
-          {/* Featured Offers Grid */}
-          {featuredOffers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {featuredOffers.slice(0, 6).map((offer, index) => (
-                <Card 
-                  key={offer.id} 
-                  className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 animate-fade-in border-[#9CD2C3]/30 rounded-lg"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Hero Content */}
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
+                Discover Amazing Baby Deals Every Week
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                Get exclusive discounts, free samples, and handpicked baby essentials delivered to your inbox. Save up to 60% on trusted brands your little one will love.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <Button 
+                  onClick={() => scrollToSection('offers')} 
+                  className="bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white px-8 py-3 text-lg font-semibold"
+                  size="lg"
                 >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={offer.image_url || "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=300&fit=crop"}
-                      alt={offer.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    
-                    {/* Discount Badge */}
-                    {offer.discount_percent && (
-                      <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                        {offer.discount_percent}% OFF
-                      </div>
-                    )}
-                    
-                    {/* Free Sample Badge */}
-                    {offer.price === 0 && (
-                      <div className="absolute top-3 right-3 bg-gradient-to-r from-[#9CD2C3] to-[#9CD2C3]/90 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                        FREE SAMPLE
-                      </div>
-                    )}
+                  View This Week's Deals
+                </Button>
+                <Button 
+                  onClick={() => navigate('/auth')} 
+                  variant="outline" 
+                  className="border-[#9CD2C3] text-[#9CD2C3] hover:bg-[#9CD2C3] hover:text-white px-8 py-3 text-lg font-semibold"
+                  size="lg"
+                >
+                  Join Free
+                </Button>
+              </div>
+            </div>
 
-                    {/* Timer */}
-                    {offer.expires_at && getTimeRemaining(offer.expires_at) && (
-                      <div className="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {getTimeRemaining(offer.expires_at)}
-                      </div>
-                    )}
-                  </div>
+            {/* Hero Images */}
+            <div className="grid grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              {featuredOffers.slice(0, 4).map((offer, index) => (
+                <div 
+                  key={offer.id} 
+                  className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  style={{ animationDelay: `${0.8 + index * 0.1}s` }}
+                >
+                  <img
+                    src={offer.image_url || "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=300&fit=crop"}
+                    alt={offer.title}
+                    className="w-full h-32 sm:h-40 object-cover"
+                  />
                   
-                  <CardContent className="p-4">
-                    <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-2">
-                      {offer.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {offer.description}
-                    </p>
-
-                    {/* Price */}
-                    {offer.price !== null && (
-                      <div className="mb-3">
-                        <span className="text-2xl font-bold text-[#9EB6CF]">
-                          {offer.price === 0 ? 'FREE' : `$${offer.price}`}
+                  {/* Overlay with offer info */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <h3 className="text-white text-sm font-semibold truncate">
+                        {offer.title}
+                      </h3>
+                      {offer.discount_percent && (
+                        <span className="text-[#9CD2C3] text-xs font-bold">
+                          {offer.discount_percent}% OFF
                         </span>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge variant="secondary" className="text-xs">
-                        {offer.category}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        {offer.age_range}
-                      </Badge>
+                      )}
+                      {offer.price === 0 && (
+                        <span className="text-[#9CD2C3] text-xs font-bold">
+                          FREE SAMPLE
+                        </span>
+                      )}
                     </div>
-                    
-                    <Button 
-                      onClick={() => offer.affiliate_link && window.open(offer.affiliate_link, '_blank')}
-                      className="w-full bg-[#9CD2C3] hover:bg-[#9CD2C3]/90 text-white font-semibold rounded-lg transition-all duration-200"
-                      disabled={!offer.affiliate_link}
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Claim Now
-                    </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-gray-600 text-lg">
-                No featured offers available at the moment. Check back soon!
-              </p>
-            </div>
-          )}
+          </div>
         </div>
       </section>
 
