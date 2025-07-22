@@ -174,7 +174,7 @@ const Index = () => {
 
       {/* Hero Banner */}
       <section 
-        className="relative pt-64 pb-16 bg-cover bg-center"
+        className="relative pt-[20rem] pb-16 bg-cover bg-center"
         style={{ backgroundImage: `url(${heroBanner})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20"></div>
