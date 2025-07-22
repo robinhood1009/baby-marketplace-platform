@@ -314,7 +314,7 @@ const Index = () => {
               <div className="flex gap-4">
                 <Button 
                   onClick={() => navigate('/auth?role=mother')}
-                  className="bg-secondary hover:bg-secondary/90 text-white px-6 py-3 rounded-full hover:scale-105 transition-all"
+                  className="bg-secondary hover:bg-secondary/90 text-gray-800 px-6 py-3 rounded-full hover:scale-105 transition-all"
                 >
                   Join as Mom
                 </Button>
