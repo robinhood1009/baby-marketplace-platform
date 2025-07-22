@@ -185,62 +185,47 @@ const Index = () => {
       >
         {/* Animated background images */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Image 1 */}
           <img 
             src="https://images.pexels.com/photos/3933271/pexels-photo-3933271.jpeg" 
             alt="Mom playing with baby"
             className="absolute top-[-5rem] left-[-5rem] w-64 h-64 rounded-full object-cover opacity-20 animate-float"
           />
-        
-          {/* Image 2 */}
           <img 
             src="https://images.unsplash.com/photo-1617791160581-bc733130f1bd" 
             alt="Baby on soft blanket"
             className="absolute bottom-[-6rem] right-[-4rem] w-72 h-72 rounded-full object-cover opacity-25 animate-zoomIn"
             style={{ animationDelay: '1s' }}
           />
-        
-          {/* Image 3 */}
           <img 
             src="https://images.pexels.com/photos/3845543/pexels-photo-3845543.jpeg" 
             alt="Parents holding baby feet"
             className="absolute top-[20%] right-[10%] w-44 h-44 rounded-full object-cover opacity-30 animate-fadeIn"
             style={{ animationDelay: '1.5s' }}
           />
-        
-          {/* Image 4 */}
           <img 
             src="https://images.pexels.com/photos/7534991/pexels-photo-7534991.jpeg" 
             alt="Mom feeding baby"
             className="absolute bottom-[30%] left-[20%] w-48 h-48 rounded-full object-cover opacity-25 animate-bounce"
             style={{ animationDelay: '2s' }}
           />
-        
-          {/* Image 5 */}
           <img 
             src="https://images.pexels.com/photos/1741231/pexels-photo-1741231.jpeg" 
             alt="Laughing baby wrapped in blanket"
             className="absolute top-[50%] left-[5%] w-40 h-40 rounded-full object-cover opacity-20 animate-float"
             style={{ animationDelay: '2.5s' }}
           />
-        
-          {/* Image 6 */}
           <img 
             src="https://images.unsplash.com/photo-1607746882042-944635dfe10e" 
             alt="Dad holding newborn"
             className="absolute top-[10%] right-[30%] w-56 h-56 rounded-full object-cover opacity-25 animate-wiggle"
             style={{ animationDelay: '3s' }}
           />
-        
-          {/* Image 7 */}
           <img 
             src="https://images.pexels.com/photos/1170895/pexels-photo-1170895.jpeg" 
             alt="Baby in white dress"
             className="absolute bottom-[10%] right-[40%] w-40 h-40 rounded-full object-cover opacity-25 animate-fadeIn"
             style={{ animationDelay: '3.5s' }}
           />
-        
-          {/* Image 8 */}
           <img 
             src="https://images.pexels.com/photos/1648378/pexels-photo-1648378.jpeg" 
             alt="Close-up baby face"
@@ -248,6 +233,7 @@ const Index = () => {
             style={{ animationDelay: '4s' }}
           />
         </div>
+
 
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 animate-fade-in">
