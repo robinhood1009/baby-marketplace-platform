@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Handle redirect after sign in
         if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(async () => {
+            // Force a fresh fetch of the profile without cache
             const { data: profile, error } = await supabase
               .from('profiles')
               .select('role, baby_age')
@@ -39,6 +40,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               console.error('Error fetching profile:', error);
               return;
             }
+            
+            console.log('Fetched profile:', profile); // Debug log
             
             if (profile) {
               const currentPath = window.location.pathname;
