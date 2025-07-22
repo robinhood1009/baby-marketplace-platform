@@ -73,19 +73,24 @@ const Admin = () => {
   const fetchPendingOffers = async () => {
     setLoading(true);
     try {
+      console.log('Fetching pending offers...');
+      console.log('Current user:', user?.email);
+      
       const { data, error } = await supabase
         .from('offers')
         .select('*')
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
+      console.log('Query result:', { data, error });
+      
       if (error) throw error;
       setPendingOffers(data || []);
     } catch (error) {
       console.error('Error fetching pending offers:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch pending offers",
+        description: `Failed to fetch pending offers: ${error.message || error}`,
         variant: "destructive"
       });
     } finally {
