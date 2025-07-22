@@ -25,6 +25,7 @@ const Offers = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [featuredOffers, setFeaturedOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -38,6 +39,7 @@ const Offers = () => {
 
   useEffect(() => {
     fetchOffers();
+    fetchFeaturedOffers();
     if (user) {
       fetchFavorites();
     }
@@ -61,6 +63,23 @@ const Offers = () => {
     }
   };
 
+  const fetchFeaturedOffers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('status', 'approved')
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setFeaturedOffers(data || []);
+    } catch (error) {
+      console.error('Error fetching featured offers:', error);
+    }
+  };
+
   const fetchOffers = async () => {
     setLoading(true);
     try {
@@ -68,7 +87,7 @@ const Offers = () => {
         .from('offers')
         .select('*')
         .eq('status', 'approved')
-        .order('is_featured', { ascending: false })
+        .eq('is_featured', false) // Only non-featured offers in main grid
         .order('created_at', { ascending: false });
 
       if (selectedAgeRange !== 'all') {
@@ -248,6 +267,92 @@ const Offers = () => {
           </div>
         </div>
 
+        {/* Editor's Picks Section */}
+        {featuredOffers.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Star className="h-6 w-6 text-yellow-500" />
+              <h2 className="text-2xl font-bold text-gray-800">Editor's Picks</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredOffers.map((offer, index) => (
+                <Card 
+                  key={offer.id} 
+                  className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-yellow-300/50 bg-gradient-to-br from-yellow-50/80 to-orange-50/80 backdrop-blur-sm overflow-hidden animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => handleOfferClick(offer)}
+                >
+                  <div className="relative">
+                    {offer.image_url && (
+                      <img 
+                        src={offer.image_url} 
+                        alt={offer.title}
+                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    )}
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 flex items-center gap-1 shadow-lg">
+                        <Star className="h-3 w-3" />
+                        Editor's Pick
+                      </Badge>
+                    </div>
+                    {user && (
+                      <button
+                        onClick={(e) => toggleFavorite(e, offer.id)}
+                        className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110"
+                      >
+                        <Heart 
+                          className={`h-5 w-5 transition-all duration-300 ${
+                            favorites.has(offer.id) 
+                              ? 'fill-red-500 text-red-500 animate-heartbeat' 
+                              : 'text-gray-400 hover:text-red-400'
+                          }`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                      {offer.title}
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 line-clamp-2">
+                      {offer.description}
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-orange-100 text-orange-700 border-orange-200 font-medium"
+                      >
+                        {offer.age_range}
+                      </Badge>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        {offer.category}
+                      </span>
+                    </div>
+                    
+                    <Button 
+                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 rounded-xl transition-all duration-300 shadow-lg"
+                      disabled={!offer.affiliate_link}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      View Featured Offer
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Regular Offers Section */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">All Offers</h2>
+        </div>
+
         {/* Loading State */}
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -259,7 +364,7 @@ const Offers = () => {
           </div>
         )}
 
-        {/* Offers Grid */}
+        
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {offers.map((offer, index) => (
