@@ -530,28 +530,12 @@ const Offers = () => {
                         {offer.title}
                       </h3>
                       
-                      {/* Price Benefits Section - Highest Priority */}
+                      {/* Price Section - Show price only */}
                       <div className="mb-4 space-y-2">
-                        {offer.discount_percent && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-red-600 bg-red-50 px-4 py-2 rounded-full border border-red-200">
-                              💰 Save {offer.discount_percent}%
-                            </span>
-                          </div>
-                        )}
-                        
-                        {offer.price === 0 && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-200">
-                              🎁 FREE
-                            </span>
-                          </div>
-                        )}
-                        
                         {offer.price !== null && offer.price > 0 && (
                           <div className="flex items-center gap-2">
-                            <span className="text-lg font-semibold text-primary bg-primary/10 px-4 py-2 rounded-full">
-                              ${offer.price.toFixed(2)}
+                            <span className="text-xl font-bold text-[#9EB6CF]">
+                              ${offer.price}
                             </span>
                           </div>
                         )}
