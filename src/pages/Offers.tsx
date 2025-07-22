@@ -29,6 +29,7 @@ const Offers = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('newest');
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -43,7 +44,7 @@ const Offers = () => {
     if (user) {
       fetchFavorites();
     }
-  }, [selectedAgeRange, selectedCategory, user]);
+  }, [selectedAgeRange, selectedCategory, sortBy, user]);
 
   const fetchFavorites = async () => {
     if (!user) return;
@@ -87,15 +88,73 @@ const Offers = () => {
         .from('offers')
         .select('*')
         .eq('status', 'approved')
-        .eq('is_featured', false) // Only non-featured offers in main grid
-        .order('created_at', { ascending: false });
+        .eq('is_featured', false); // Only non-featured offers in main grid
 
+      // Apply filters
       if (selectedAgeRange !== 'all') {
         query = query.eq('age_range', selectedAgeRange);
       }
 
       if (selectedCategory !== 'all') {
         query = query.eq('category', selectedCategory);
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case 'newest':
+          query = query.order('created_at', { ascending: false });
+          break;
+        case 'trending':
+          // Get offers with most clicks in last 7 days
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          
+          const { data: trendingData, error: trendingError } = await supabase
+            .from('offers')
+            .select(`
+              *,
+              click_logs!inner(
+                created_at
+              )
+            `)
+            .eq('status', 'approved')
+            .eq('is_featured', false)
+            .gte('click_logs.timestamp', sevenDaysAgo.toISOString());
+          
+          if (trendingError) throw trendingError;
+          
+          // Count clicks and sort by trending
+          const offersWithClickCounts = (trendingData || []).reduce((acc: any[], offer) => {
+            const existingOffer = acc.find(o => o.id === offer.id);
+            if (existingOffer) {
+              existingOffer.clickCount++;
+            } else {
+              acc.push({ ...offer, clickCount: 1 });
+            }
+            return acc;
+          }, []);
+          
+          // Apply additional filters for trending
+          let filteredTrending = offersWithClickCounts;
+          if (selectedAgeRange !== 'all') {
+            filteredTrending = filteredTrending.filter(offer => offer.age_range === selectedAgeRange);
+          }
+          if (selectedCategory !== 'all') {
+            filteredTrending = filteredTrending.filter(offer => offer.category === selectedCategory);
+          }
+          
+          // Sort by click count descending
+          filteredTrending.sort((a, b) => (b.clickCount || 0) - (a.clickCount || 0));
+          
+          setOffers(filteredTrending);
+          setLoading(false);
+          return;
+          
+        case 'featured':
+          query = query.eq('is_featured', true).order('created_at', { ascending: false });
+          break;
+        default:
+          query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;
@@ -209,6 +268,23 @@ const Offers = () => {
           </div>
         </header>
 
+        {/* Sort Controls */}
+        <div className="mb-4 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-[#9EB6CF]/20 shadow-sm">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700">Sort by:</span>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48 border-[#9EB6CF]/50 focus:border-[#9EB6CF] bg-white/80">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-[#9EB6CF]/50 shadow-lg">
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="trending">Trending</SelectItem>
+                <SelectItem value="featured">Featured</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         {/* Filters */}
         <div className="mb-8 p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-[#9EB6CF]/30 shadow-sm">
           <div className="flex items-center gap-6 flex-wrap">
@@ -251,17 +327,18 @@ const Offers = () => {
               </Select>
             </div>
 
-            {(selectedAgeRange !== 'all' || selectedCategory !== 'all') && (
+            {(selectedAgeRange !== 'all' || selectedCategory !== 'all' || sortBy !== 'newest') && (
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={() => {
                   setSelectedAgeRange('all');
                   setSelectedCategory('all');
+                  setSortBy('newest');
                 }}
                 className="text-gray-600 hover:text-gray-800"
               >
-                Clear filters
+                Clear all filters
               </Button>
             )}
           </div>
@@ -366,14 +443,15 @@ const Offers = () => {
 
         
         {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {offers.map((offer, index) => (
-              <Card 
-                key={offer.id} 
-                className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-[#9EB6CF]/30 bg-white/80 backdrop-blur-sm overflow-hidden animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-                onClick={() => handleOfferClick(offer)}
-              >
+          <div className="transition-all duration-500 ease-in-out">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+              {offers.map((offer, index) => (
+                <Card 
+                  key={offer.id} 
+                  className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-[#9EB6CF]/30 bg-white/80 backdrop-blur-sm overflow-hidden animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                  onClick={() => handleOfferClick(offer)}
+                >
                 <div className="relative">
                   {offer.image_url && (
                     <img 
@@ -439,6 +517,7 @@ const Offers = () => {
                 </CardContent>
               </Card>
             ))}
+            </div>
           </div>
         )}
 
