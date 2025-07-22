@@ -41,17 +41,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
             
             if (profile) {
+              const currentPath = window.location.pathname;
+              
               if (profile.role === 'mother' && !profile.baby_age) {
-                window.location.href = '/onboarding';
+                if (currentPath !== '/onboarding') {
+                  window.location.href = '/onboarding';
+                }
               } else if (profile.role === 'mother') {
-                window.location.href = '/offers';
+                if (currentPath !== '/offers') {
+                  window.location.href = '/offers';
+                }
               } else if (profile.role === 'vendor') {
-                window.location.href = '/vendor-dashboard';
+                if (currentPath !== '/vendor-dashboard') {
+                  window.location.href = '/vendor-dashboard';
+                }
               }
             } else {
               // No profile found - redirect to home for now
               console.warn('No profile found for user, redirecting to home');
-              window.location.href = '/';
+              if (window.location.pathname !== '/') {
+                window.location.href = '/';
+              }
             }
           }, 100);
         }
