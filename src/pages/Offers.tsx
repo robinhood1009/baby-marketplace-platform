@@ -257,7 +257,7 @@ const Offers = () => {
                 className="border-[#9EB6CF] hover:bg-[#9EB6CF]/10 flex items-center gap-2"
               >
                 <Heart className="h-4 w-4" />
-                Saved Offers ({favorites.size})
+                My Favorites ({favorites.size})
               </Button>
             )}
             {user && (

@@ -123,7 +123,7 @@ const SavedOffers = () => {
             <div>
               <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
                 <Heart className="h-8 w-8 text-red-500 fill-red-500" />
-                Saved Offers
+                My Favorites
               </h1>
               <p className="text-gray-600 text-lg">
                 Your favorited deals and products
@@ -223,7 +223,7 @@ const SavedOffers = () => {
               <Heart className="h-24 w-24 mx-auto opacity-30" />
             </div>
             <h3 className="text-2xl font-semibold text-gray-600 mb-3">
-              No saved offers yet
+              No favorites yet
             </h3>
             <p className="text-gray-500 mb-8 text-lg">
               Start exploring offers and save your favorites by clicking the heart icon

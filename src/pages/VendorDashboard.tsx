@@ -345,12 +345,12 @@ const VendorDashboard = () => {
                 <DialogTrigger asChild>
                   <Button className="animate-fade-in">
                     <Plus className="w-4 h-4 mr-2" />
-                    Create New Offer
+                    Add a New Deal
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Create New Offer</DialogTitle>
+                    <DialogTitle>Add a New Deal</DialogTitle>
                   </DialogHeader>
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -458,7 +458,7 @@ const VendorDashboard = () => {
                         <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button type="submit">Submit Offer</Button>
+                        <Button type="submit">Share Your Baby-Friendly Product</Button>
                       </div>
                     </form>
                   </Form>

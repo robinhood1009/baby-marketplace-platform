@@ -186,25 +186,25 @@ const Index = () => {
         {/* Animated background images */}
         <div className="absolute inset-0 overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=400&fit=crop&crop=face" 
-            alt="Baby"
+            src="https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400&h=400&fit=crop&crop=face" 
+            alt="Happy diverse mother with baby"
             className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
           />
           <img 
-            src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop" 
-            alt="Baby items"
+            src="https://images.unsplash.com/photo-1609193230660-bfdb5b9e3151?w=400&h=400&fit=crop" 
+            alt="Diverse family with baby gifts"
             className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '1s' }}
           />
           <img 
-            src="https://images.unsplash.com/photo-1519689373023-dd07c7988603?w=300&h=300&fit=crop" 
-            alt="Baby toys"
+            src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=300&fit=crop&crop=face" 
+            alt="Happy parents with newborn"
             className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-10 animate-pulse"
             style={{ animationDelay: '2s' }}
           />
           <img 
-            src="https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=300&h=300&fit=crop" 
-            alt="Baby clothes"
+            src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=300&h=300&fit=crop" 
+            alt="Diverse mother baby bonding"
             className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '3s' }}
           />
@@ -259,8 +259,8 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in">
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" 
-                  alt="Happy mom"
+                  src="https://images.unsplash.com/photo-1622568949053-4af3c3bc7ff6?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
                 <div>
@@ -284,8 +284,8 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face" 
-                  alt="Happy mom"
+                  src="https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
                 <div>
@@ -309,8 +309,8 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face" 
-                  alt="Happy mom"
+                  src="https://images.unsplash.com/photo-1607502482842-75b9f95c3e36?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
                 <div>
@@ -398,8 +398,8 @@ const Index = () => {
               <div className="space-y-6">
                 {[
                   { icon: Store, title: "Register as a business", desc: "Set up your vendor profile" },
-                  { icon: Gift, title: "Submit your offer", desc: "Share your baby products with families" },
-                  { icon: TrendingUp, title: "Book homepage banner ads", desc: "Increase your visibility" },
+                  { icon: Gift, title: "Share your baby-friendly product", desc: "Connect with families who need your products" },
+                  { icon: TrendingUp, title: "Get your offer on the homepage", desc: "Increase your visibility with featured placement" },
                   { icon: TrendingUp, title: "Track clicks and ad performance", desc: "Monitor your success metrics" }
                 ].map((step, index) => (
                   <Card key={index} className="hover-scale transition-all duration-300 hover:shadow-lg">
@@ -468,8 +468,14 @@ const Index = () => {
 
       {/* About Us Section */}
       <section id="about" className="py-20 bg-gray-50 relative overflow-hidden">
-        {/* Background blob */}
-        <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full"></div>
+        {/* Background image */}
+        <div className="absolute top-10 right-10 w-64 h-64 opacity-10 rounded-full overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop" 
+            alt="Diverse family with baby"
+            className="w-full h-full object-cover animate-pulse"
+          />
+        </div>
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
