@@ -4,30 +4,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Baby, 
   Menu, 
   X, 
-  UserCheck, 
-  Store, 
   Gift, 
-  Search, 
-  TrendingUp, 
-  Heart,
-  Mail,
-  Phone,
-  MapPin,
-  ChevronDown,
-  ExternalLink
+  Shield, 
+  Zap,
+  ExternalLink,
+  Clock,
+  Star
 } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -35,45 +30,56 @@ const Index = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [featuredOffers, setFeaturedOffers] = useState<any[]>([]);
+  const [topDiscountOffers, setTopDiscountOffers] = useState<any[]>([]);
 
-  // Fetch featured offers
+  // Fetch featured offers and top discounts
   useEffect(() => {
-    const fetchFeaturedOffers = async () => {
-      const { data, error } = await supabase
+    const fetchOffers = async () => {
+      // Featured offers
+      const { data: featured, error: featuredError } = await supabase
         .from('offers')
         .select('*')
         .eq('is_featured', true)
         .eq('status', 'approved')
-        .limit(5);
+        .limit(6);
       
-      if (data && !error) {
-        setFeaturedOffers(data);
+      if (featured && !featuredError) {
+        setFeaturedOffers(featured);
+      }
+
+      // Top discount offers
+      const { data: discountOffers, error: discountError } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('status', 'approved')
+        .not('discount_percent', 'is', null)
+        .order('discount_percent', { ascending: false })
+        .limit(6);
+      
+      if (discountOffers && !discountError) {
+        setTopDiscountOffers(discountOffers);
       }
     };
     
-    fetchFeaturedOffers();
+    fetchOffers();
   }, []);
 
-  // Handle navbar background on scroll
+  // Smooth scroll animation on load
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'how-it-works', 'about', 'contact'];
-      const scrollPosition = window.scrollY + 100;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
           }
-        }
-      }
-    };
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   const scrollToSection = (sectionId: string) => {
@@ -82,6 +88,21 @@ const Index = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
+  };
+
+  const getTimeRemaining = (expiresAt: string | null) => {
+    if (!expiresAt) return null;
+    const now = new Date().getTime();
+    const expiry = new Date(expiresAt).getTime();
+    const diff = expiry - now;
+    
+    if (diff <= 0) return null;
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    if (days > 0) return `${days}d left`;
+    return `${hours}h left`;
   };
 
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -115,20 +136,20 @@ const Index = () => {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'how-it-works', label: 'How it Works' },
+    { id: 'offers', label: 'Offers', onClick: () => navigate('/offers') },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' },
   ];
 
   return (
-    <div className="min-h-screen font-outfit">
-      {/* Fixed Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+    <div className="min-h-screen bg-[#F9F9F9]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+      {/* Sticky Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <Baby className="w-8 h-8 text-primary" />
+              <Baby className="w-8 h-8 text-[#9EB6CF]" />
               <span className="text-xl font-semibold text-gray-900">BabyDeals</span>
             </div>
 
@@ -137,19 +158,15 @@ const Index = () => {
               {navItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`font-medium transition-colors ${
-                    activeSection === item.id
-                      ? 'text-primary border-b-2 border-primary'
-                      : 'text-gray-600 hover:text-primary'
-                  }`}
+                  onClick={() => item.onClick ? item.onClick() : scrollToSection(item.id)}
+                  className="font-medium text-gray-600 hover:text-[#9EB6CF] transition-colors"
                 >
                   {item.label}
                 </button>
               ))}
               <Button
                 onClick={() => navigate('/auth')}
-                className="bg-primary hover:bg-primary/90"
+                className="bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
               >
                 Login
               </Button>
@@ -159,7 +176,7 @@ const Index = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-600 hover:text-primary transition-colors"
+                className="text-gray-600 hover:text-[#9EB6CF] transition-colors"
               >
                 {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -168,24 +185,20 @@ const Index = () => {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden bg-white border-t animate-fade-in">
+            <div className="md:hidden bg-white border-t">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className={`block w-full text-left px-3 py-2 font-medium transition-colors ${
-                      activeSection === item.id
-                        ? 'text-primary bg-primary/5'
-                        : 'text-gray-600 hover:text-primary hover:bg-gray-50'
-                    }`}
+                    onClick={() => item.onClick ? item.onClick() : scrollToSection(item.id)}
+                    className="block w-full text-left px-3 py-2 font-medium text-gray-600 hover:text-[#9EB6CF] hover:bg-gray-50 transition-colors"
                   >
                     {item.label}
                   </button>
                 ))}
                 <Button
                   onClick={() => navigate('/auth')}
-                  className="w-full mt-2 bg-primary hover:bg-primary/90"
+                  className="w-full mt-2 bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
                 >
                   Login
                 </Button>
@@ -195,24 +208,25 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Featured Deals Section */}
-      <section id="home" className="pt-20 pb-16 bg-gradient-to-br from-background to-accent/5">
+      {/* Hero Section */}
+      <section id="home" className="pt-20 pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
-              This Week's Featured Baby Offers
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 animate-fade-in">
+              This Week's Baby Offers Just for You
             </h1>
-            <p className="text-xl text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Handpicked deals from trusted brands for your little one
+            <p className="text-xl text-gray-600 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              Claim exclusive discounts, free samples, and baby essentials
             </p>
           </div>
 
+          {/* Featured Offers Grid */}
           {featuredOffers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
-              {featuredOffers.slice(0, 5).map((offer, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {featuredOffers.slice(0, 6).map((offer, index) => (
                 <Card 
                   key={offer.id} 
-                  className="group overflow-hidden hover-scale transition-all duration-300 hover:shadow-xl animate-fade-in border-2 border-primary/10 hover:border-primary/30"
+                  className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 animate-fade-in border-[#9CD2C3]/30 rounded-lg"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="relative overflow-hidden">
@@ -221,44 +235,60 @@ const Index = () => {
                       alt={offer.title}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {(offer.title.includes('%') || offer.title.toLowerCase().includes('off') || 
-                      offer.description.includes('%') || offer.description.toLowerCase().includes('off') ||
-                      offer.discount_percent) && (
+                    
+                    {/* Discount Badge */}
+                    {offer.discount_percent && (
                       <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                        {offer.discount_percent ? `${offer.discount_percent}% OFF` : 
-                         (offer.title.match(/\d+%/) ? offer.title.match(/\d+%/)[0] + ' OFF' : 'SALE!')}
+                        {offer.discount_percent}% OFF
                       </div>
                     )}
                     
                     {/* Free Sample Badge */}
                     {offer.price === 0 && (
-                      <div className="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-[#9CD2C3] to-[#9CD2C3]/90 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                         FREE SAMPLE
+                      </div>
+                    )}
+
+                    {/* Timer */}
+                    {offer.expires_at && getTimeRemaining(offer.expires_at) && (
+                      <div className="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {getTimeRemaining(offer.expires_at)}
                       </div>
                     )}
                   </div>
                   
-                  <CardContent className="p-6">
-                    <h3 className="font-bold text-lg mb-3 text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-2">
                       {offer.title}
                     </h3>
                     
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                       {offer.description}
                     </p>
+
+                    {/* Price */}
+                    {offer.price !== null && (
+                      <div className="mb-3">
+                        <span className="text-2xl font-bold text-[#9EB6CF]">
+                          {offer.price === 0 ? 'FREE' : `$${offer.price}`}
+                        </span>
+                      </div>
+                    )}
                     
                     <div className="flex items-center justify-between mb-4">
-                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium capitalize">
+                      <Badge variant="secondary" className="text-xs">
                         {offer.category}
-                      </span>
-                      <span className="inline-block bg-secondary/20 text-secondary-foreground px-3 py-1 rounded-full text-xs font-medium">
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
                         {offer.age_range}
-                      </span>
+                      </Badge>
                     </div>
                     
                     <Button 
                       onClick={() => offer.affiliate_link && window.open(offer.affiliate_link, '_blank')}
-                      className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold py-3 rounded-lg hover-scale shadow-lg"
+                      className="w-full bg-[#9CD2C3] hover:bg-[#9CD2C3]/90 text-white font-semibold rounded-lg transition-all duration-200"
                       disabled={!offer.affiliate_link}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
@@ -270,426 +300,263 @@ const Index = () => {
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-muted-foreground text-lg animate-fade-in">
+              <p className="text-gray-600 text-lg">
                 No featured offers available at the moment. Check back soon!
               </p>
             </div>
           )}
-
-          {/* CTA Section */}
-          <div className="text-center animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={() => navigate('/auth?role=mother')}
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-8 text-lg hover-scale"
-              >
-                <Heart className="w-5 h-5 mr-2" />
-                I'm a Mother
-              </Button>
-              <Button
-                onClick={() => navigate('/offers')}
-                size="lg"
-                variant="outline"
-                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold py-4 px-8 text-lg hover-scale transition-all duration-200"
-              >
-                <Search className="w-5 h-5 mr-2" />
-                Browse All Offers
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-r from-pink-50 via-blue-50 to-green-50">
+      {/* Top Discounts Section */}
+      <section className="py-16 bg-[#F9F9F9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              What Parents Are Saying
-            </h2>
-            <p className="text-gray-600">Real stories from families who found amazing deals</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in">
-              <div className="flex items-center mb-4">
-                <img 
-                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Happy diverse mother"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <p className="font-semibold text-gray-900">Sarah M.</p>
-                  <p className="text-sm text-gray-600">Mom of 1</p>
-                </div>
-              </div>
-              <blockquote className="text-gray-700 italic mb-4">
-                "I got a box of baby goodies in just 3 clicks. So convenient and my little one loves everything!"
-              </blockquote>
-              <div className="flex justify-center">
-                <img 
-                  src="https://img.freepik.com/free-vector/baby-elements-collection-hand-drawn-style_23-2147767117.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Baby items"
-                  className="w-32 h-24 rounded-lg object-cover opacity-80"
-                />
-              </div>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="flex items-center mb-4">
-                <img 
-                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Happy diverse mother"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <p className="font-semibold text-gray-900">Aisha K.</p>
-                  <p className="text-sm text-gray-600">Mom of 2</p>
-                </div>
-              </div>
-              <blockquote className="text-gray-700 italic mb-4">
-                "Perfect timing! Got organic baby food samples right when we started solids. Saved us so much trial and error."
-              </blockquote>
-              <div className="flex justify-center">
-                <img 
-                  src="https://img.freepik.com/free-photo/homemade-baby-food-jars_23-2148580431.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Baby food"
-                  className="w-32 h-24 rounded-lg object-cover opacity-80"
-                />
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <div className="flex items-center mb-4">
-                <img 
-                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Happy diverse mother"
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <p className="font-semibold text-gray-900">Maria L.</p>
-                  <p className="text-sm text-gray-600">New Mom</p>
-                </div>
-              </div>
-              <blockquote className="text-gray-700 italic mb-4">
-                "As a new mom, finding trusted brands felt overwhelming. This platform made it so easy to discover quality products."
-              </blockquote>
-              <div className="flex justify-center">
-                <img 
-                  src="https://img.freepik.com/free-photo/baby-elementson-light-blue-background_1220-4301.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-                  alt="Baby clothes"
-                  className="w-32 h-24 rounded-lg object-cover opacity-80"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Trust indicators */}
-          <div className="mt-12 text-center">
-            <p className="text-gray-600 mb-4">Trusted by over 10,000 families</p>
-            <div className="flex justify-center space-x-8 items-center opacity-60">
-              <div className="text-sm font-medium">⭐ 4.9/5 rating</div>
-              <div className="text-sm font-medium">🛡️ Verified offers</div>
-              <div className="text-sm font-medium">📦 2M+ products delivered</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 animate-on-scroll">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              How It Works
+              Top Discounts
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Simple steps for both mothers and vendors to get started
+            <p className="text-xl text-gray-600">
+              Don't miss these amazing savings on baby essentials
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* For Mothers */}
-            <div className="animate-fade-in">
-              <h3 className="text-2xl font-bold text-primary mb-8 text-center">
-                <Heart className="w-8 h-8 inline mr-2" />
-                For Mothers
-              </h3>
-              
-              <div className="space-y-6">
-                {[
-                  { icon: UserCheck, title: "Sign up", desc: "Create your account in seconds" },
-                  { icon: Baby, title: "Tell us your baby's age", desc: "Get personalized recommendations" },
-                  { icon: Search, title: "Browse personalized offers", desc: "Discover deals perfect for your little one" },
-                  { icon: Gift, title: "Claim via affiliate links", desc: "Get amazing deals and support vendors" }
-                ].map((step, index) => (
-                  <Card key={index} className="hover-scale transition-all duration-300 hover:shadow-lg">
-                    <CardContent className="p-6 flex items-center space-x-4">
-                      <div className="bg-primary/10 rounded-full p-3">
-                        <step.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">{step.title}</h4>
-                        <p className="text-gray-600">{step.desc}</p>
-                      </div>
-                      <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
-                        {index + 1}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+          {topDiscountOffers.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {topDiscountOffers.slice(0, 6).map((offer, index) => (
+                <Card 
+                  key={offer.id} 
+                  className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 animate-on-scroll border-[#9EB6CF]/30 rounded-lg"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={offer.image_url || "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=300&fit=crop"}
+                      alt={offer.title}
+                      className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    
+                    <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                      {offer.discount_percent}% OFF
+                    </div>
 
-            {/* For Vendors */}
-            <div className="animate-fade-in">
-              <h3 className="text-2xl font-bold text-primary mb-8 text-center">
-                <Store className="w-8 h-8 inline mr-2" />
-                For Vendors
-              </h3>
-              
-              <div className="space-y-6">
-                {[
-                  { icon: Store, title: "Register as a business", desc: "Set up your vendor profile" },
-                  { icon: Gift, title: "Share your baby-friendly product", desc: "Connect with families who need your products" },
-                  { icon: TrendingUp, title: "Get your offer on the homepage", desc: "Increase your visibility with featured placement" },
-                  { icon: TrendingUp, title: "Track clicks and ad performance", desc: "Monitor your success metrics" }
-                ].map((step, index) => (
-                  <Card key={index} className="hover-scale transition-all duration-300 hover:shadow-lg">
-                    <CardContent className="p-6 flex items-center space-x-4">
-                      <div className="bg-primary/10 rounded-full p-3">
-                        <step.icon className="w-6 h-6 text-primary" />
+                    {offer.expires_at && getTimeRemaining(offer.expires_at) && (
+                      <div className="absolute top-3 left-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {getTimeRemaining(offer.expires_at)}
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">{step.title}</h4>
-                        <p className="text-gray-600">{step.desc}</p>
+                    )}
+                  </div>
+                  
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-1">
+                      {offer.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {offer.description}
+                    </p>
+
+                    {offer.price !== null && (
+                      <div className="mb-3">
+                        <span className="text-xl font-bold text-[#9EB6CF]">
+                          ${offer.price}
+                        </span>
                       </div>
-                      <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
-                        {index + 1}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                    )}
+                    
+                    <Button 
+                      onClick={() => offer.affiliate_link && window.open(offer.affiliate_link, '_blank')}
+                      className="w-full bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white font-semibold rounded-lg"
+                      disabled={!offer.affiliate_link}
+                    >
+                      Claim Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          </div>
+          )}
         </div>
       </section>
 
-      {/* Baby Brand CTA Section */}
-      <section className="py-20 relative overflow-hidden" style={{ backgroundColor: '#9EB6CF' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-white animate-fade-in">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8">
-              Are you a baby brand?
+      {/* Why Use This Site Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 animate-on-scroll">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Why Moms Love BabyDeals
             </h2>
-            
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <p className="text-lg font-medium">List your product in minutes</p>
+            <p className="text-xl text-gray-600">
+              Everything you need to discover the best baby products
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Benefit 1 */}
+            <div className="text-center p-6 animate-on-scroll">
+              <div className="w-16 h-16 bg-gradient-to-r from-[#9CD2C3] to-[#9CD2C3]/80 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Gift className="w-8 h-8 text-white" />
               </div>
-              
-              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <p className="text-lg font-medium">Get seen by real moms</p>
-              </div>
-              
-              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <p className="text-lg font-medium">Pay only for homepage ads</p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Free gifts and samples
+              </h3>
+              <p className="text-gray-600">
+                Try before you buy with free samples from trusted baby brands
+              </p>
             </div>
-            
-            <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <Button
-                onClick={() => navigate('/auth?role=vendor')}
-                size="lg"
-                className="bg-white text-primary hover:bg-white/90 font-semibold py-4 px-8 text-lg hover-scale"
-              >
-                <Store className="w-5 h-5 mr-2" />
-                Start Listing
-              </Button>
+
+            {/* Benefit 2 */}
+            <div className="text-center p-6 animate-on-scroll" style={{ animationDelay: '0.2s' }}>
+              <div className="w-16 h-16 bg-gradient-to-r from-[#9EB6CF] to-[#9EB6CF]/80 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Safe & trusted brands only
+              </h3>
+              <p className="text-gray-600">
+                Every product is vetted for safety and quality standards
+              </p>
+            </div>
+
+            {/* Benefit 3 */}
+            <div className="text-center p-6 animate-on-scroll" style={{ animationDelay: '0.4s' }}>
+              <div className="w-16 h-16 bg-gradient-to-r from-[#9CD2C3] to-[#9EB6CF] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Fast and personalized
+              </h3>
+              <p className="text-gray-600">
+                Takes just 1 minute to sign up and start receiving personalized offers
+              </p>
             </div>
           </div>
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full"></div>
-        <div className="absolute bottom-10 left-10 w-24 h-24 bg-white/10 rounded-full"></div>
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="py-20 bg-gray-50 relative overflow-hidden">
-        {/* Background image */}
-        <div className="absolute top-10 right-10 w-64 h-64 opacity-10 rounded-full overflow-hidden">
-          <img 
-            src="https://img.freepik.com/premium-photo/mother-kisses-childs-feet-while-father-holds-it_926199-3896069.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
-            alt="Diverse family with baby"
-            className="w-full h-full object-cover animate-pulse"
-          />
-        </div>
-        
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-            Our Mission
-          </h2>
-          
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 animate-fade-in">
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-8">
-              We help new moms find trusted baby products and services by connecting them with offers from baby-focused brands. We support small vendors by giving them a space to reach real families.
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-8 mt-12">
-              <div className="text-center">
-                <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-primary" />
+      <section id="about" className="py-16 bg-[#F9F9F9]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="animate-on-scroll">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                About BabyDeals
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                We're passionate about helping new moms discover the best baby products at unbeatable prices. 
+                Our platform connects families with trusted brands, offering exclusive discounts, free samples, 
+                and age-matched recommendations.
+              </p>
+              <p className="text-lg text-gray-600 mb-6">
+                Every offer is carefully curated to ensure safety, quality, and value. We believe parenthood 
+                should be joyful, not stressful - especially when it comes to finding the right products for your little one.
+              </p>
+              <div className="flex items-center space-x-6 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 mr-1 text-yellow-500" />
+                  <span>10,000+ Happy Families</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">For Families</h3>
-                <p className="text-gray-600">Curated offers for your baby's journey</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Store className="w-8 h-8 text-primary" />
+                <div className="flex items-center">
+                  <Shield className="w-4 h-4 mr-1 text-green-500" />
+                  <span>100% Verified Brands</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">For Vendors</h3>
-                <p className="text-gray-600">Reach engaged parent communities</p>
               </div>
-              
-              <div className="text-center">
-                <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">For Growth</h3>
-                <p className="text-gray-600">Building stronger family-business connections</p>
-              </div>
+            </div>
+            <div className="animate-on-scroll" style={{ animationDelay: '0.2s' }}>
+              <img 
+                src="https://images.unsplash.com/photo-1544963150-889fa2638fb3?w=600&h=400&fit=crop" 
+                alt="Happy mom with baby"
+                className="w-full h-80 object-cover rounded-lg shadow-lg"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+      {/* Contact Us Section */}
+      <section id="contact" className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 animate-on-scroll">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Contact Us
+              Get in Touch
             </h2>
             <p className="text-xl text-gray-600">
-              Have questions? We'd love to hear from you.
+              Have questions? We'd love to hear from you
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div className="animate-fade-in">
+          <Card className="animate-on-scroll border-[#9EB6CF]/30">
+            <CardContent className="p-8">
               <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    Name
+                  </label>
                   <Input
-                    placeholder="Your Name"
+                    id="name"
+                    type="text"
                     value={contactForm.name}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                     required
-                    className="border-2 border-gray-200 focus:border-primary rounded-lg p-4"
+                    className="w-full"
+                    placeholder="Your name"
                   />
                 </div>
-                
+
                 <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
                   <Input
+                    id="email"
                     type="email"
-                    placeholder="Your Email"
                     value={contactForm.email}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     required
-                    className="border-2 border-gray-200 focus:border-primary rounded-lg p-4"
+                    className="w-full"
+                    placeholder="your@email.com"
                   />
                 </div>
-                
+
                 <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    Message
+                  </label>
                   <Textarea
-                    placeholder="Your Message"
+                    id="message"
                     value={contactForm.message}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                     required
-                    rows={6}
-                    className="border-2 border-gray-200 focus:border-primary rounded-lg p-4"
+                    className="w-full h-32"
+                    placeholder="Tell us how we can help..."
                   />
                 </div>
-                
+
                 <Button
                   type="submit"
-                  size="lg"
                   disabled={isSubmitting}
-                  className="w-full bg-primary hover:bg-primary/90 py-4 text-lg font-semibold rounded-lg hover-scale"
+                  className="w-full bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white font-semibold py-3 rounded-lg transition-all duration-200"
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
-            </div>
-
-            {/* Contact Info */}
-            <div className="animate-fade-in">
-              <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-8 h-full">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
-                
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-primary/10 rounded-full p-3">
-                      <Mail className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Email</p>
-                      <p className="text-gray-600">hello@babydeals.com</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-primary/10 rounded-full p-3">
-                      <Phone className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Phone</p>
-                      <p className="text-gray-600">+1 (555) 123-4567</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-primary/10 rounded-full p-3">
-                      <MapPin className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Address</p>
-                      <p className="text-gray-600">123 Baby Street<br />Family City, FC 12345</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 p-6 bg-white rounded-xl">
-                  <p className="text-gray-700 italic">
-                    "We're here to support both families and vendors in creating meaningful connections around baby products and services."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Baby className="w-6 h-6" />
-            <span className="text-lg font-semibold">BabyDeals</span>
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Baby className="w-8 h-8 text-[#9EB6CF]" />
+              <span className="text-xl font-semibold">BabyDeals</span>
+            </div>
+            <p className="text-gray-400 max-w-md mx-auto">
+              Connecting families with the best baby products and deals from trusted brands.
+            </p>
           </div>
-          <p className="text-gray-400">
-            © 2024 BabyDeals. Connecting families with trusted baby brands.
-          </p>
         </div>
       </footer>
     </div>
