@@ -188,24 +188,24 @@ const Index = () => {
           <img 
             src="https://img.freepik.com/free-photo/front-view-happy-smiled-single-mother-with-baby-twins-girls-dressed-white-dresses-home_8353-11709.jpg?semt=ais_hybrid&w=740" 
             alt="Happy diverse mother with baby"
-            className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
+            className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-25 animate-pulse"
           />
           <img 
             src="https://img.freepik.com/free-photo/family-two-mums-having-baby_23-2149168817.jpg?semt=ais_hybrid&w=740" 
             alt="Diverse family with baby gifts"
-            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-15 animate-pulse"
+            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-25 animate-pulse"
             style={{ animationDelay: '1s' }}
           />
           <img 
             src="https://img.freepik.com/premium-photo/close-up-mother-carrying-son-home_1048944-11237445.jpg?semt=ais_hybrid&w=740" 
             alt="Happy parents with newborn"
-            className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-10 animate-pulse"
+            className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-30 animate-pulse"
             style={{ animationDelay: '2s' }}
           />
           <img 
             src="https://img.freepik.com/free-photo/family-two-mums-having-baby_23-2149168848.jpg?semt=ais_hybrid&w=740" 
             alt="Diverse mother baby bonding"
-            className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-15 animate-pulse"
+            className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-35 animate-pulse"
             style={{ animationDelay: '3s' }}
           />
         </div>
