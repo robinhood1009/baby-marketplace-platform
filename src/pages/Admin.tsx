@@ -24,7 +24,7 @@ interface PendingOffer {
 }
 
 const Admin = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [pendingOffers, setPendingOffers] = useState<PendingOffer[]>([]);
@@ -32,8 +32,11 @@ const Admin = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAdminAccess();
-  }, [user]);
+    // Only check admin access after auth loading is complete
+    if (!authLoading) {
+      checkAdminAccess();
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     if (user && user.email === 'admin@yourdomain.com') {
@@ -42,12 +45,19 @@ const Admin = () => {
   }, [user]);
 
   const checkAdminAccess = () => {
+    // Don't redirect if still loading authentication
+    if (authLoading) {
+      return;
+    }
+    
     if (!user) {
-      navigate('/auth');
+      console.log('No user found, redirecting to admin auth'); // Debug log
+      navigate('/auth?role=admin');
       return;
     }
 
     if (user.email !== 'admin@yourdomain.com') {
+      console.log('User is not admin:', user.email); // Debug log
       toast({
         title: "Access Denied",
         description: "You must be an admin to access this page.",
@@ -56,6 +66,8 @@ const Admin = () => {
       navigate('/');
       return;
     }
+    
+    console.log('Admin access granted for:', user.email); // Debug log
   };
 
   const fetchPendingOffers = async () => {
@@ -164,6 +176,18 @@ const Admin = () => {
       });
     }
   };
+
+  // Show loading during auth check
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking admin access...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
