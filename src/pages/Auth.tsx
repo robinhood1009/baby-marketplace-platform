@@ -128,7 +128,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background font-outfit">
       <Navbar />
-      <div className="flex items-center justify-center bg-background p-4 pt-32">
+      <div className="flex items-center justify-center bg-background p-4 pt-64">
         <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">

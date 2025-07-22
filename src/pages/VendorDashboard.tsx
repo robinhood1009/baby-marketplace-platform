@@ -350,7 +350,7 @@ const VendorDashboard = () => {
   return (
     <div className="min-h-screen bg-background font-outfit">
       <Navbar />
-      <div className="p-4 pt-32">
+      <div className="p-4 pt-64">
         <div className="max-w-6xl mx-auto">
           <header className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-foreground">

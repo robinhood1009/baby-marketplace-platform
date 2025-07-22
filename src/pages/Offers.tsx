@@ -243,7 +243,7 @@ const Offers = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-green-50/50 font-outfit">
       <Navbar />
-      <div className="max-w-7xl mx-auto p-6 pt-32">
+      <div className="max-w-7xl mx-auto p-6 pt-64">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div>

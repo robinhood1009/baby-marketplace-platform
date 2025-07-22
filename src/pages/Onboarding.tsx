@@ -82,7 +82,7 @@ const Onboarding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 font-outfit">
       <Navbar />
-      <div className="flex items-center justify-center p-4 pt-32">
+      <div className="flex items-center justify-center p-4 pt-64">
       <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-foreground">
