@@ -221,12 +221,19 @@ const Index = () => {
                       alt={offer.title}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {/* Check if there's discount info in title/description and show badge */}
                     {(offer.title.includes('%') || offer.title.toLowerCase().includes('off') || 
-                      offer.description.includes('%') || offer.description.toLowerCase().includes('off')) && (
-                      <div className="absolute top-3 right-3 bg-gradient-to-r from-accent to-accent-foreground text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                        {/* Extract discount from title or show generic */}
-                        {offer.title.match(/\d+%/) ? offer.title.match(/\d+%/)[0] + ' OFF' : 'SALE!'}
+                      offer.description.includes('%') || offer.description.toLowerCase().includes('off') ||
+                      offer.discount_percent) && (
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                        {offer.discount_percent ? `${offer.discount_percent}% OFF` : 
+                         (offer.title.match(/\d+%/) ? offer.title.match(/\d+%/)[0] + ' OFF' : 'SALE!')}
+                      </div>
+                    )}
+                    
+                    {/* Free Sample Badge */}
+                    {offer.price === 0 && (
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                        FREE SAMPLE
                       </div>
                     )}
                   </div>

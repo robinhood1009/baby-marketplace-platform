@@ -19,6 +19,9 @@ interface Offer {
   image_url: string | null;
   is_featured: boolean;
   created_at: string;
+  discount_percent: number | null;
+  price: number | null;
+  expires_at: string | null;
 }
 
 const Offers = () => {
@@ -446,10 +449,17 @@ const Offers = () => {
           <div className="transition-all duration-500 ease-in-out">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
               {offers.map((offer, index) => {
-                // Extract discount information from title and description
-                const discountMatch = (offer.title + ' ' + offer.description).match(/(\d+)%\s*(off|discount)/i);
-                const discountPercent = discountMatch ? parseInt(discountMatch[1]) : null;
-                const isFreeOffer = offer.title.toLowerCase().includes('free') || offer.description.toLowerCase().includes('free sample') || offer.description.toLowerCase().includes('free trial');
+                // Calculate days until expiration
+                const getDaysUntilExpiry = (expiresAt: string | null) => {
+                  if (!expiresAt) return null;
+                  const now = new Date();
+                  const expiry = new Date(expiresAt);
+                  const diffTime = expiry.getTime() - now.getTime();
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  return diffDays > 0 ? diffDays : null;
+                };
+
+                const daysUntilExpiry = getDaysUntilExpiry(offer.expires_at);
                 
                 return (
                   <Card 
@@ -467,17 +477,24 @@ const Offers = () => {
                         />
                       )}
                       
-                      {/* Large Discount Badge - Top Right Corner */}
-                      {discountPercent && (
-                        <div className="absolute top-0 right-0 bg-gradient-to-br from-red-500 to-red-600 text-white px-4 py-3 rounded-bl-2xl font-bold text-lg shadow-xl z-10">
-                          {discountPercent}% OFF
+                      {/* Large Discount Badge - Most Visible Element */}
+                      {offer.discount_percent && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-br from-red-500 to-red-600 text-white px-5 py-4 rounded-bl-3xl font-bold text-xl shadow-2xl z-20">
+                          {offer.discount_percent}% OFF
                         </div>
                       )}
                       
                       {/* Free Sample Badge */}
-                      {!discountPercent && isFreeOffer && (
-                        <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-3 rounded-bl-2xl font-bold text-sm shadow-xl z-10">
+                      {!offer.discount_percent && offer.price === 0 && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-3 rounded-bl-2xl font-bold text-lg shadow-xl z-20">
                           FREE SAMPLE
+                        </div>
+                      )}
+                      
+                      {/* Expiry Badge */}
+                      {daysUntilExpiry && (
+                        <div className={`absolute ${offer.discount_percent || offer.price === 0 ? 'top-16' : 'top-0'} left-0 bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-2 rounded-br-2xl font-semibold text-sm shadow-lg z-10`}>
+                          ⏳ Ends in {daysUntilExpiry} day{daysUntilExpiry !== 1 ? 's' : ''}
                         </div>
                       )}
                       
@@ -494,7 +511,7 @@ const Offers = () => {
                       {user && (
                         <button
                           onClick={(e) => toggleFavorite(e, offer.id)}
-                          className={`absolute ${discountPercent || isFreeOffer ? 'top-16 right-3' : 'top-3 right-3'} p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110 z-10`}
+                          className={`absolute ${offer.discount_percent || offer.price === 0 ? 'bottom-3 right-3' : 'top-3 right-3'} p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110 z-10`}
                         >
                           <Heart 
                             className={`h-5 w-5 transition-all duration-300 ${
@@ -508,31 +525,45 @@ const Offers = () => {
                     </div>
                     
                     <CardContent className="p-6">
-                      {/* Title - High Priority */}
+                      {/* Title - High Priority after image */}
                       <h3 className="text-lg font-bold text-gray-800 line-clamp-2 group-hover:text-[#9EB6CF] transition-colors mb-3">
                         {offer.title}
                       </h3>
                       
-                      {/* Price Benefits Section - Prioritized before description */}
-                      {(discountPercent || isFreeOffer) && (
-                        <div className="mb-4 space-y-2">
-                          {discountPercent && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full">
-                                💰 Save {discountPercent}%
-                              </span>
-                            </div>
-                          )}
-                          
-                          {isFreeOffer && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
-                                🎁 Free Offer
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      {/* Price Benefits Section - Highest Priority */}
+                      <div className="mb-4 space-y-2">
+                        {offer.discount_percent && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold text-red-600 bg-red-50 px-4 py-2 rounded-full border border-red-200">
+                              💰 Save {offer.discount_percent}%
+                            </span>
+                          </div>
+                        )}
+                        
+                        {offer.price === 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold text-green-600 bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                              🎁 FREE
+                            </span>
+                          </div>
+                        )}
+                        
+                        {offer.price !== null && offer.price > 0 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-semibold text-primary bg-primary/10 px-4 py-2 rounded-full">
+                              ${offer.price.toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {daysUntilExpiry && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                              ⏳ {daysUntilExpiry} day{daysUntilExpiry !== 1 ? 's' : ''} left
+                            </span>
+                          </div>
+                        )}
+                      </div>
                       
                       {/* Category and Age Range Tags */}
                       <div className="flex items-center justify-between mb-4 gap-2">
@@ -552,9 +583,9 @@ const Offers = () => {
                         {offer.description}
                       </p>
                       
-                      {/* Bright Mint CTA Button with Hover Grow */}
+                      {/* Bright Mint CTA Button with Hover Grow Animation */}
                       <Button 
-                        className="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white border-0 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold py-3"
+                        className="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white border-0 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-110 font-semibold py-3 text-base"
                         disabled={!offer.affiliate_link}
                         onClick={(e) => {
                           e.stopPropagation();
