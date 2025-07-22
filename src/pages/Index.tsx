@@ -187,7 +187,7 @@ const Index = () => {
           </p>
           <Button 
             onClick={scrollToOffers}
-            className="bg-secondary hover:bg-secondary/90 text-white px-8 py-4 text-lg font-semibold rounded-full hover:scale-105 transition-all duration-300 shadow-lg animate-fade-in"
+            className="bg-secondary hover:bg-secondary/90 text-gray-800 px-8 py-4 text-lg font-semibold rounded-full hover:scale-105 transition-all duration-300 shadow-lg animate-fade-in"
             size="lg"
             style={{ animationDelay: '0.4s' }}
           >
