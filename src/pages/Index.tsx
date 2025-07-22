@@ -183,11 +183,31 @@ const Index = () => {
           background: 'linear-gradient(135deg, #9EB6CF 0%, #9CD2C3 100%)'
         }}
       >
-        {/* Animated background blobs */}
+        {/* Animated background images */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-white/5 rounded-full animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white/5 rounded-full animate-pulse delay-2000"></div>
+          <img 
+            src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=400&fit=crop&crop=face" 
+            alt="Baby"
+            className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop" 
+            alt="Baby items"
+            className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-15 animate-pulse"
+            style={{ animationDelay: '1s' }}
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1519689373023-dd07c7988603?w=300&h=300&fit=crop" 
+            alt="Baby toys"
+            className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-10 animate-pulse"
+            style={{ animationDelay: '2s' }}
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=300&h=300&fit=crop" 
+            alt="Baby clothes"
+            className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-15 animate-pulse"
+            style={{ animationDelay: '3s' }}
+          />
         </div>
 
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 animate-fade-in">
