@@ -191,19 +191,19 @@ const Index = () => {
             className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
           />
           <img 
-            src="https://images.unsplash.com/photo-1609193230660-bfdb5b9e3151?w=400&h=400&fit=crop" 
+            src="https://media.istockphoto.com/id/636672444/photo/dancing-as-a-part-of-development.jpg?s=1024x1024&w=is&k=20&c=wZX3-v0oKdn8Y0U9rp3wuhyDcJFHyfksZVk454FJ18U=" 
             alt="Diverse family with baby gifts"
             className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '1s' }}
           />
           <img 
-            src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=300&fit=crop&crop=face" 
+            src="https://media.istockphoto.com/id/599684740/photo/knowing-we-created-this-little-guy-is-pretty-awesome.jpg?s=1024x1024&w=is&k=20&c=ztJ0sWl80gNH32zvBEr8TNetN2DJTv-ls_Zy5tNap7o=" 
             alt="Happy parents with newborn"
             className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-10 animate-pulse"
             style={{ animationDelay: '2s' }}
           />
           <img 
-            src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=300&h=300&fit=crop" 
+            src="https://media.istockphoto.com/id/450845217/photo/mother-and-baby.jpg?s=1024x1024&w=is&k=20&c=FyXhlB4F3DHFKkuSDsiKX0cBrGkmhaKmgES-XeGJqnY=" 
             alt="Diverse mother baby bonding"
             className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '3s' }}
