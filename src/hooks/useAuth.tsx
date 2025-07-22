@@ -71,18 +71,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (!error && data.user) {
-      // Create profile with role
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: data.user.id,
-          role: role
-        });
+      // Update the role in the profile that was automatically created by the trigger
+      // We'll wait a moment to ensure the trigger has completed
+      setTimeout(async () => {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ role: role })
+          .eq('user_id', data.user.id);
 
-      if (profileError) {
-        console.error('Error creating profile:', profileError);
-        return { error: profileError };
-      }
+        if (profileError) {
+          console.error('Error updating profile role:', profileError);
+        }
+      }, 500);
     }
 
     return { error };
