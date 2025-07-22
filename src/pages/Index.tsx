@@ -186,24 +186,24 @@ const Index = () => {
         {/* Animated background images */}
         <div className="absolute inset-0 overflow-hidden">
           <img 
-            src="https://media.sciencephoto.com/image/f0133540/800wm/F0133540-Mother_holding_baby.jpg" 
+            src="https://img.freepik.com/free-photo/front-view-happy-smiled-single-mother-with-baby-twins-girls-dressed-white-dresses-home_8353-11709.jpg?semt=ais_hybrid&w=740" 
             alt="Happy diverse mother with baby"
             className="absolute -top-20 -right-20 w-64 h-64 rounded-full object-cover opacity-20 animate-pulse"
           />
           <img 
-            src="https://media.istockphoto.com/id/636672444/photo/dancing-as-a-part-of-development.jpg?s=1024x1024&w=is&k=20&c=wZX3-v0oKdn8Y0U9rp3wuhyDcJFHyfksZVk454FJ18U=" 
+            src="https://img.freepik.com/free-photo/family-two-mums-having-baby_23-2149168817.jpg?semt=ais_hybrid&w=740" 
             alt="Diverse family with baby gifts"
             className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '1s' }}
           />
           <img 
-            src="https://media.istockphoto.com/id/599684740/photo/knowing-we-created-this-little-guy-is-pretty-awesome.jpg?s=1024x1024&w=is&k=20&c=ztJ0sWl80gNH32zvBEr8TNetN2DJTv-ls_Zy5tNap7o=" 
+            src="https://img.freepik.com/premium-photo/close-up-mother-carrying-son-home_1048944-11237445.jpg?semt=ais_hybrid&w=740" 
             alt="Happy parents with newborn"
             className="absolute top-1/4 right-1/4 w-48 h-48 rounded-full object-cover opacity-10 animate-pulse"
             style={{ animationDelay: '2s' }}
           />
           <img 
-            src="https://media.istockphoto.com/id/450845217/photo/mother-and-baby.jpg?s=1024x1024&w=is&k=20&c=FyXhlB4F3DHFKkuSDsiKX0cBrGkmhaKmgES-XeGJqnY=" 
+            src="https://img.freepik.com/free-photo/family-two-mums-having-baby_23-2149168848.jpg?semt=ais_hybrid&w=740" 
             alt="Diverse mother baby bonding"
             className="absolute bottom-1/3 right-1/3 w-40 h-40 rounded-full object-cover opacity-15 animate-pulse"
             style={{ animationDelay: '3s' }}
@@ -259,7 +259,7 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in">
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1622568949053-4af3c3bc7ff6?w=60&h=60&fit=crop&crop=face" 
+                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
@@ -273,7 +273,7 @@ const Index = () => {
               </blockquote>
               <div className="flex justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=150&fit=crop" 
+                  src="https://img.freepik.com/free-vector/baby-elements-collection-hand-drawn-style_23-2147767117.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Baby items"
                   className="w-32 h-24 rounded-lg object-cover opacity-80"
                 />
@@ -284,7 +284,7 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=60&h=60&fit=crop&crop=face" 
+                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
@@ -298,7 +298,7 @@ const Index = () => {
               </blockquote>
               <div className="flex justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=150&fit=crop" 
+                  src="https://img.freepik.com/free-photo/homemade-baby-food-jars_23-2148580431.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Baby food"
                   className="w-32 h-24 rounded-lg object-cover opacity-80"
                 />
@@ -309,7 +309,7 @@ const Index = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.4s' }}>
               <div className="flex items-center mb-4">
                 <img 
-                  src="https://images.unsplash.com/photo-1607502482842-75b9f95c3e36?w=60&h=60&fit=crop&crop=face" 
+                  src="https://img.freepik.com/free-photo/front-view-mother-playing-home-with-her-daughter_23-2148890962.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Happy diverse mother"
                   className="w-12 h-12 rounded-full object-cover mr-4"
                 />
@@ -323,7 +323,7 @@ const Index = () => {
               </blockquote>
               <div className="flex justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200&h=150&fit=crop" 
+                  src="https://img.freepik.com/free-photo/baby-elementson-light-blue-background_1220-4301.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
                   alt="Baby clothes"
                   className="w-32 h-24 rounded-lg object-cover opacity-80"
                 />
