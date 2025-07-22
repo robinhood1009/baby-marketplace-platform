@@ -423,6 +423,49 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Baby Brand CTA Section */}
+      <section className="py-20 relative overflow-hidden" style={{ backgroundColor: '#9EB6CF' }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-white animate-fade-in">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8">
+              Are you a baby brand?
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <p className="text-lg font-medium">List your product in minutes</p>
+              </div>
+              
+              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <p className="text-lg font-medium">Get seen by real moms</p>
+              </div>
+              
+              <div className="flex items-center justify-center md:justify-start space-x-3 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <p className="text-lg font-medium">Pay only for homepage ads</p>
+              </div>
+            </div>
+            
+            <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <Button
+                onClick={() => navigate('/auth?role=vendor')}
+                size="lg"
+                className="bg-white text-primary hover:bg-white/90 font-semibold py-4 px-8 text-lg hover-scale"
+              >
+                <Store className="w-5 h-5 mr-2" />
+                Start Listing
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full"></div>
+        <div className="absolute bottom-10 left-10 w-24 h-24 bg-white/10 rounded-full"></div>
+      </section>
+
       {/* About Us Section */}
       <section id="about" className="py-20 bg-gray-50 relative overflow-hidden">
         {/* Background blob */}
