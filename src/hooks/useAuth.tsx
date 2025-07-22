@@ -28,11 +28,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Handle redirect after sign in
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('User signed in:', session.user.email); // Debug log
+          
           setTimeout(async () => {
             const currentPath = window.location.pathname;
+            console.log('Current path after sign in:', currentPath); // Debug log
             
             // Check for admin access FIRST (before profile check)
             if (session.user.email === 'admin@yourdomain.com') {
+              console.log('Admin user detected, redirecting to /admin'); // Debug log
               if (currentPath !== '/admin') {
                 window.location.href = '/admin';
               }

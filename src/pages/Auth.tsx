@@ -17,6 +17,8 @@ const Auth = () => {
   const role = searchParams.get('role') as 'mother' | 'vendor' | 'admin' || 'mother';
   const isAdminLogin = role === 'admin';
   
+  console.log('Auth page - role:', role, 'isAdminLogin:', isAdminLogin); // Debug log
+  
   const { signUp, signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -28,6 +30,14 @@ const Auth = () => {
       setIsSignUp(false); // Always sign in for admin
     }
   }, [isAdminLogin]);
+
+  // Prevent redirect for admin users during auth
+  useEffect(() => {
+    if (user && isAdminLogin && user.email === 'admin@yourdomain.com') {
+      // Admin is already logged in, redirect to admin panel
+      navigate('/admin');
+    }
+  }, [user, isAdminLogin, navigate]);
 
   // Redirect is handled by useAuth hook
 
