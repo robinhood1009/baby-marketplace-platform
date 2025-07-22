@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      click_logs: {
+        Row: {
+          id: string
+          offer_id: string
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          offer_id: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          offer_id?: string
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "click_logs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           affiliate_link: string | null

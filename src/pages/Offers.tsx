@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { Filter, ExternalLink, Star } from 'lucide-react';
+import { Filter, ExternalLink, Star, X } from 'lucide-react';
 
 interface Offer {
   id: string;
@@ -25,6 +26,8 @@ const Offers = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Available filter options
   const ageRanges = ['0-6 months', '6-12 months', '12-36 months', '0-24 months', '3-18 months', '18-36 months'];
@@ -63,9 +66,31 @@ const Offers = () => {
     }
   };
 
-  const handleOfferClick = (affiliateLink: string | null) => {
-    if (affiliateLink) {
-      window.open(affiliateLink, '_blank', 'noopener,noreferrer');
+  const handleOfferClick = (offer: Offer) => {
+    setSelectedOffer(offer);
+    setIsModalOpen(true);
+  };
+
+  const handleClaimOffer = async (offer: Offer) => {
+    try {
+      // Log the click
+      await supabase
+        .from('click_logs')
+        .insert({
+          user_id: user?.id || null,
+          offer_id: offer.id
+        });
+
+      // Open affiliate link
+      if (offer.affiliate_link) {
+        window.open(offer.affiliate_link, '_blank', 'noopener,noreferrer');
+      }
+    } catch (error) {
+      console.error('Error logging click:', error);
+      // Still open the link even if logging fails
+      if (offer.affiliate_link) {
+        window.open(offer.affiliate_link, '_blank', 'noopener,noreferrer');
+      }
     }
   };
 
@@ -166,7 +191,7 @@ const Offers = () => {
                 key={offer.id} 
                 className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-[#9EB6CF]/30 bg-white/80 backdrop-blur-sm overflow-hidden animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
-                onClick={() => handleOfferClick(offer.affiliate_link)}
+                onClick={() => handleOfferClick(offer)}
               >
                 <div className="relative">
                   {offer.image_url && (
@@ -245,6 +270,85 @@ const Offers = () => {
             </Button>
           </div>
         )}
+
+        {/* Offer Modal */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+            {selectedOffer && (
+              <>
+                <DialogHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <DialogTitle className="text-2xl font-bold text-gray-800 pr-4">
+                        {selectedOffer.title}
+                      </DialogTitle>
+                      {selectedOffer.is_featured && (
+                        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 flex items-center gap-1 mt-2 w-fit">
+                          <Star className="h-3 w-3" />
+                          Featured Offer
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                <div className="space-y-6">
+                  {/* Offer Image */}
+                  {selectedOffer.image_url && (
+                    <div className="relative rounded-xl overflow-hidden">
+                      <img 
+                        src={selectedOffer.image_url} 
+                        alt={selectedOffer.title}
+                        className="w-full h-64 object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Offer Details */}
+                  <div className="space-y-4">
+                    <DialogDescription className="text-gray-600 text-base leading-relaxed">
+                      {selectedOffer.description}
+                    </DialogDescription>
+
+                    <div className="flex flex-wrap gap-3">
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-[#9CD2C3]/20 text-[#9CD2C3] border-[#9CD2C3]/30 font-medium px-3 py-1"
+                      >
+                        Age: {selectedOffer.age_range}
+                      </Badge>
+                      <Badge 
+                        variant="outline" 
+                        className="border-[#9EB6CF]/50 text-gray-600 px-3 py-1"
+                      >
+                        {selectedOffer.category}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsModalOpen(false)}
+                      className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-50"
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      onClick={() => handleClaimOffer(selectedOffer)}
+                      disabled={!selectedOffer.affiliate_link}
+                      className="flex-1 bg-gradient-to-r from-[#9EB6CF] to-[#9CD2C3] hover:from-[#8aa5bd] hover:to-[#8bc4b5] text-white border-0 animate-pulse-subtle hover:animate-pulse"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Claim Offer
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
