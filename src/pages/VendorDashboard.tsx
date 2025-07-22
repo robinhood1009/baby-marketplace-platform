@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useForm } from 'react-hook-form';
@@ -289,19 +290,12 @@ const VendorDashboard = () => {
                         )}
                       />
                       
-                      <FormField
-                        control={form.control}
-                        name="image_url"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Image URL (Optional)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://example.com/image.jpg" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="space-y-4">
+                        <ImageUpload
+                          onImageUrlChange={(url) => form.setValue('image_url', url)}
+                          currentImageUrl={form.watch('image_url')}
+                        />
+                      </div>
                       
                       <div className="flex justify-end space-x-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
