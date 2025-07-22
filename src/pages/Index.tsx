@@ -471,7 +471,7 @@ const Index = () => {
         {/* Background image */}
         <div className="absolute top-10 right-10 w-64 h-64 opacity-10 rounded-full overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop" 
+            src="https://img.freepik.com/premium-photo/mother-kisses-childs-feet-while-father-holds-it_926199-3896069.jpg?ga=GA1.1.1286603211.1753175352&semt=ais_hybrid&w=740" 
             alt="Diverse family with baby"
             className="w-full h-full object-cover animate-pulse"
           />
