@@ -491,6 +491,13 @@ const Offers = () => {
                         </div>
                       )}
                       
+                      {/* Price Badge - Show price above image */}
+                      {!offer.discount_percent && offer.price !== null && offer.price > 0 && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-br from-[#9EB6CF] to-[#9EB6CF]/80 text-white px-4 py-3 rounded-bl-2xl font-bold text-lg shadow-xl z-20">
+                          ${offer.price}
+                        </div>
+                      )}
+                      
                       {/* Expiry Badge */}
                       {daysUntilExpiry && (
                         <div className={`absolute ${offer.discount_percent || offer.price === 0 ? 'top-16' : 'top-0'} left-0 bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-2 rounded-br-2xl font-semibold text-sm shadow-lg z-10`}>
@@ -529,25 +536,6 @@ const Offers = () => {
                       <h3 className="text-lg font-bold text-gray-800 line-clamp-2 group-hover:text-[#9EB6CF] transition-colors mb-3">
                         {offer.title}
                       </h3>
-                      
-                      {/* Price Section - Show price only */}
-                      <div className="mb-4 space-y-2">
-                        {offer.price !== null && offer.price > 0 && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl font-bold text-[#9EB6CF]">
-                              ${offer.price}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {daysUntilExpiry && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                              ⏳ {daysUntilExpiry} day{daysUntilExpiry !== 1 ? 's' : ''} left
-                            </span>
-                          </div>
-                        )}
-                      </div>
                       
                       {/* Category and Age Range Tags */}
                       <div className="flex items-center justify-between mb-4 gap-2">
