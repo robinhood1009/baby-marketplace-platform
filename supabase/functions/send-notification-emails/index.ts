@@ -64,7 +64,7 @@ const handler = async (req: Request): Promise<Response> => {
                 vendorEmail: approvedUser.user.email,
                 data: {
                   title: record.title,
-                  public_link: `${req.headers.get("origin") || "https://your-domain.com"}/offers?id=${record.id}`
+                  public_link: `https://your-app-domain.com/offers?id=${record.id}`
                 }
               };
             }
@@ -88,7 +88,7 @@ const handler = async (req: Request): Promise<Response> => {
                 type: "ad_purchased",
                 vendorEmail: adUser.user.email,
                 data: {
-                  title: "Ad Campaign", // You might want to add a title field to ads table
+                  title: "Ad Campaign",
                   start_date: new Date(record.start_date).toLocaleDateString(),
                   end_date: new Date(record.end_date).toLocaleDateString()
                 }
@@ -100,14 +100,19 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     if (emailData) {
-      // Call the email sending function
-      const emailResult = await supabase.functions.invoke("send-vendor-email", {
-        body: emailData
+      // Call the email sending function directly
+      const response = await fetch(`${supabaseUrl}/functions/v1/send-vendor-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseServiceKey}`
+        },
+        body: JSON.stringify(emailData)
       });
       
-      if (emailResult.error) {
-        console.error("Error sending email:", emailResult.error);
-        throw emailResult.error;
+      if (!response.ok) {
+        console.error("Error sending email:", await response.text());
+        throw new Error(`Failed to send email: ${response.statusText}`);
       }
       
       console.log("Email sent successfully");
