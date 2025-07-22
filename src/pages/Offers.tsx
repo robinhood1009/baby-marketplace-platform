@@ -77,14 +77,14 @@ const Offers = () => {
             <span className="text-sm font-medium">Filter by age:</span>
           </div>
           <Select 
-            value={selectedAgeGroup || ''} 
-            onValueChange={(value) => setSelectedAgeGroup(value as BabyAgeGroup || null)}
+            value={selectedAgeGroup || 'all'} 
+            onValueChange={(value) => setSelectedAgeGroup(value === 'all' ? null : value as BabyAgeGroup)}
           >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="All age groups" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All age groups</SelectItem>
+              <SelectItem value="all">All age groups</SelectItem>
               {ageGroups.map((age) => (
                 <SelectItem key={age} value={age}>
                   {age}
