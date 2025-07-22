@@ -19,6 +19,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+				sans: ['Outfit', 'system-ui', 'sans-serif'],
 				outfit: ['Outfit', 'sans-serif'],
 			},
 			colors: {
@@ -101,6 +102,10 @@ export default {
 				'scale-hover': {
 					'0%': { transform: 'scale(1)' },
 					'100%': { transform: 'scale(1.05)' }
+				},
+				'bounce-slow': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
@@ -108,8 +113,21 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.6s ease-out',
 				'scale-hover': 'scale-hover 0.2s ease-out',
+				'bounce-slow': 'bounce-slow 2s ease-in-out infinite',
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addUtilities }: any) {
+			addUtilities({
+				'.hover-scale': {
+					'transition': 'transform 0.2s ease-in-out',
+					'&:hover': {
+						'transform': 'scale(1.05)'
+					}
+				}
+			})
+		}
+	],
 } satisfies Config;
