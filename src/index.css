@@ -4,31 +4,34 @@
 
 @layer base {
   :root {
-    --background: 248 250 252;
+    --background: 0 0% 100%;
     --foreground: 15 23 42;
-    --card: 255 255 255;
+    --card: 0 0% 100%;
     --card-foreground: 15 23 42;
-    --popover: 255 255 255;
+    --popover: 0 0% 100%;
     --popover-foreground: 15 23 42;
-    --primary: 158 182 207;
-    --primary-foreground: 255 255 255;
-    --secondary: 156 210 195;
+    --primary: 211 35% 71%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 156 35% 75%;
     --secondary-foreground: 15 23 42;
-    --muted: 241 245 249;
+    --muted: 210 40% 96%;
     --muted-foreground: 100 116 139;
-    --accent: 156 210 195;
+    --accent: 156 35% 75%;
     --accent-foreground: 15 23 42;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: 158 182 207;
-    --chart-1: 158 182 207;
-    --chart-2: 156 210 195;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 211 35% 71%;
+    --chart-1: 211 35% 71%;
+    --chart-2: 156 35% 75%;
     --chart-3: 34 197 94;
     --chart-4: 251 191 36;
     --chart-5: 168 85 247;
     --radius: 0.75rem;
+    --pastel-mint: 156 35% 75%;
+    --pastel-blue: 211 35% 71%;
+    --hero-gradient: linear-gradient(135deg, hsl(var(--pastel-blue) / 0.1), hsl(var(--pastel-mint) / 0.1));
   }
 
   .dark {
