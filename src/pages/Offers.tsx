@@ -445,78 +445,129 @@ const Offers = () => {
         {!loading && (
           <div className="transition-all duration-500 ease-in-out">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-              {offers.map((offer, index) => (
-                <Card 
-                  key={offer.id} 
-                  className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-[#9EB6CF]/30 bg-white/80 backdrop-blur-sm overflow-hidden animate-fade-in"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                  onClick={() => handleOfferClick(offer)}
-                >
-                <div className="relative">
-                  {offer.image_url && (
-                    <img 
-                      src={offer.image_url} 
-                      alt={offer.title}
-                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                  )}
-                  {offer.is_featured && (
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 flex items-center gap-1">
-                        <Star className="h-3 w-3" />
-                        Featured
-                      </Badge>
-                    </div>
-                  )}
-                  {/* Heart Icon for Favorites */}
-                  {user && (
-                    <button
-                      onClick={(e) => toggleFavorite(e, offer.id)}
-                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110"
-                    >
-                      <Heart 
-                        className={`h-5 w-5 transition-all duration-300 ${
-                          favorites.has(offer.id) 
-                            ? 'fill-red-500 text-red-500 animate-heartbeat' 
-                            : 'text-gray-400 hover:text-red-400'
-                        }`}
-                      />
-                    </button>
-                  )}
-                </div>
+              {offers.map((offer, index) => {
+                // Extract discount information from title and description
+                const discountMatch = (offer.title + ' ' + offer.description).match(/(\d+)%\s*(off|discount)/i);
+                const discountPercent = discountMatch ? parseInt(discountMatch[1]) : null;
+                const isFreeOffer = offer.title.toLowerCase().includes('free') || offer.description.toLowerCase().includes('free sample') || offer.description.toLowerCase().includes('free trial');
                 
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-gray-800 line-clamp-2 group-hover:text-[#9EB6CF] transition-colors">
-                    {offer.title}
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 line-clamp-2">
-                    {offer.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between mb-4">
-                    <Badge 
-                      variant="secondary" 
-                      className="bg-[#9CD2C3]/20 text-[#9CD2C3] border-[#9CD2C3]/30 font-medium"
-                    >
-                      {offer.age_range}
-                    </Badge>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                      {offer.category}
-                    </span>
-                  </div>
-                  
-                  <Button 
-                    className="w-full bg-gradient-to-r from-[#9EB6CF] to-[#9CD2C3] hover:from-[#8aa5bd] hover:to-[#8bc4b5] text-white border-0 rounded-xl transition-all duration-300"
-                    disabled={!offer.affiliate_link}
+                return (
+                  <Card 
+                    key={offer.id} 
+                    className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl rounded-2xl border-[#9EB6CF]/30 bg-white/80 backdrop-blur-sm overflow-hidden animate-fade-in"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    onClick={() => handleOfferClick(offer)}
                   >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Offer
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="relative">
+                      {offer.image_url && (
+                        <img 
+                          src={offer.image_url} 
+                          alt={offer.title}
+                          className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      )}
+                      
+                      {/* Large Discount Badge - Top Right Corner */}
+                      {discountPercent && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-br from-red-500 to-red-600 text-white px-4 py-3 rounded-bl-2xl font-bold text-lg shadow-xl z-10">
+                          {discountPercent}% OFF
+                        </div>
+                      )}
+                      
+                      {/* Free Sample Badge */}
+                      {!discountPercent && isFreeOffer && (
+                        <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-green-600 text-white px-4 py-3 rounded-bl-2xl font-bold text-sm shadow-xl z-10">
+                          FREE SAMPLE
+                        </div>
+                      )}
+                      
+                      {offer.is_featured && (
+                        <div className="absolute top-3 left-3 z-10">
+                          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 flex items-center gap-1">
+                            <Star className="h-3 w-3" />
+                            Featured
+                          </Badge>
+                        </div>
+                      )}
+                      
+                      {/* Heart Icon for Favorites */}
+                      {user && (
+                        <button
+                          onClick={(e) => toggleFavorite(e, offer.id)}
+                          className={`absolute ${discountPercent || isFreeOffer ? 'top-16 right-3' : 'top-3 right-3'} p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 transform hover:scale-110 z-10`}
+                        >
+                          <Heart 
+                            className={`h-5 w-5 transition-all duration-300 ${
+                              favorites.has(offer.id) 
+                                ? 'fill-red-500 text-red-500 animate-heartbeat' 
+                                : 'text-gray-400 hover:text-red-400'
+                            }`}
+                          />
+                        </button>
+                      )}
+                    </div>
+                    
+                    <CardContent className="p-6">
+                      {/* Title - High Priority */}
+                      <h3 className="text-lg font-bold text-gray-800 line-clamp-2 group-hover:text-[#9EB6CF] transition-colors mb-3">
+                        {offer.title}
+                      </h3>
+                      
+                      {/* Price Benefits Section - Prioritized before description */}
+                      {(discountPercent || isFreeOffer) && (
+                        <div className="mb-4 space-y-2">
+                          {discountPercent && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                                💰 Save {discountPercent}%
+                              </span>
+                            </div>
+                          )}
+                          
+                          {isFreeOffer && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                🎁 Free Offer
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Category and Age Range Tags */}
+                      <div className="flex items-center justify-between mb-4 gap-2">
+                        <Badge 
+                          variant="secondary" 
+                          className="bg-[#9CD2C3]/20 text-[#9CD2C3] border-[#9CD2C3]/30 font-medium"
+                        >
+                          {offer.age_range}
+                        </Badge>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                          {offer.category}
+                        </span>
+                      </div>
+                      
+                      {/* Description - Lower Priority */}
+                      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                        {offer.description}
+                      </p>
+                      
+                      {/* Bright Mint CTA Button with Hover Grow */}
+                      <Button 
+                        className="w-full bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white border-0 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold py-3"
+                        disabled={!offer.affiliate_link}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClaimOffer(offer);
+                        }}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Claim Offer
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         )}
