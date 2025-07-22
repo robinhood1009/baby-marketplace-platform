@@ -29,7 +29,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Handle redirect after sign in
         if (event === 'SIGNED_IN' && session?.user) {
           setTimeout(async () => {
-            // Force a fresh fetch of the profile without cache
+            const currentPath = window.location.pathname;
+            
+            // Check for admin access FIRST (before profile check)
+            if (session.user.email === 'admin@yourdomain.com') {
+              if (currentPath !== '/admin') {
+                window.location.href = '/admin';
+              }
+              return;
+            }
+            
+            // For non-admin users, fetch profile
             const { data: profile, error } = await supabase
               .from('profiles')
               .select('role, baby_age')
@@ -44,16 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.log('Fetched profile:', profile); // Debug log
             
             if (profile) {
-              const currentPath = window.location.pathname;
-              
-              // Check for admin access
-              if (session.user.email === 'admin@yourdomain.com') {
-                if (currentPath !== '/admin') {
-                  window.location.href = '/admin';
-                }
-                return;
-              }
-              
               if (profile.role === 'mother' && !profile.baby_age) {
                 if (currentPath !== '/onboarding') {
                   window.location.href = '/onboarding';
