@@ -20,33 +20,7 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      // Get user profile to determine redirect
-      const getUserProfile = async () => {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('role, baby_age')
-          .eq('user_id', user.id)
-          .single();
-
-        if (data && !error) {
-          if (data.role === 'mother') {
-            // If mother hasn't completed onboarding, go to onboarding
-            if (!data.baby_age) {
-              navigate('/onboarding');
-            } else {
-              navigate('/offers');
-            }
-          } else {
-            navigate('/vendor-dashboard');
-          }
-        }
-      };
-      
-      getUserProfile();
-    }
-  }, [user, navigate]);
+  // Redirect is handled by useAuth hook
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
