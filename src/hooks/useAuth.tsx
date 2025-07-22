@@ -46,6 +46,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (profile) {
               const currentPath = window.location.pathname;
               
+              // Check for admin access
+              if (session.user.email === 'admin@yourdomain.com') {
+                if (currentPath !== '/admin') {
+                  window.location.href = '/admin';
+                }
+                return;
+              }
+              
               if (profile.role === 'mother' && !profile.baby_age) {
                 if (currentPath !== '/onboarding') {
                   window.location.href = '/onboarding';
@@ -120,6 +128,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Redirect to home page after sign out
+    window.location.href = '/';
   };
 
   return (

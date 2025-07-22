@@ -14,11 +14,20 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const role = searchParams.get('role') as 'mother' | 'vendor' || 'mother';
+  const role = searchParams.get('role') as 'mother' | 'vendor' | 'admin' || 'mother';
+  const isAdminLogin = role === 'admin';
   
   const { signUp, signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Set admin email when role is admin
+  useEffect(() => {
+    if (isAdminLogin) {
+      setEmail('admin@yourdomain.com');
+      setIsSignUp(false); // Always sign in for admin
+    }
+  }, [isAdminLogin]);
 
   // Redirect is handled by useAuth hook
 
@@ -27,7 +36,26 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (isAdminLogin) {
+        // Admin login - only allow sign in, no sign up
+        if (email !== 'admin@yourdomain.com') {
+          toast({
+            title: "Access Denied",
+            description: "Only admin@yourdomain.com can access the admin panel.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({
+            title: "Admin login failed",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else if (isSignUp) {
         const { error } = await signUp(email, password, role);
         if (error) {
           if (error.message.includes('already registered')) {
@@ -70,17 +98,24 @@ const Auth = () => {
     }
   };
 
-  const roleTitle = role === 'mother' ? 'Mom' : 'Vendor';
-  const roleDescription = role === 'mother' 
-    ? 'Find amazing deals for your little ones' 
-    : 'Sell your products to loving families';
+  const roleTitle = isAdminLogin ? 'Admin' : role === 'mother' ? 'Mom' : 'Vendor';
+  const roleDescription = isAdminLogin 
+    ? 'Access the admin panel to manage offers and site content' 
+    : role === 'mother' 
+      ? 'Find amazing deals for your little ones' 
+      : 'Sell your products to loving families';
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
-            {isSignUp ? 'Join as a' : 'Welcome back,'} {roleTitle}
+            {isAdminLogin 
+              ? 'Admin Login' 
+              : isSignUp 
+                ? `Join as a ${roleTitle}` 
+                : `Welcome back, ${roleTitle}`
+            }
           </CardTitle>
           <CardDescription>
             {roleDescription}
@@ -96,7 +131,8 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="Enter your email"
+                placeholder={isAdminLogin ? "admin@yourdomain.com" : "Enter your email"}
+                disabled={isAdminLogin}
               />
             </div>
             <div className="space-y-2">
@@ -115,21 +151,23 @@ const Auth = () => {
               type="submit" 
               className="w-full" 
               disabled={loading}
-              variant={role === 'mother' ? 'default' : 'secondary'}
+              variant={isAdminLogin ? 'destructive' : role === 'mother' ? 'default' : 'secondary'}
             >
-              {loading ? 'Please wait...' : isSignUp ? `Sign up as ${roleTitle}` : 'Sign in'}
+              {loading ? 'Please wait...' : isAdminLogin ? 'Admin Login' : isSignUp ? `Sign up as ${roleTitle}` : 'Sign in'}
             </Button>
           </form>
           
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
-            </button>
-          </div>
+          {!isAdminLogin && (
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
+              </button>
+            </div>
+          )}
           
           <div className="mt-4 text-center">
             <button

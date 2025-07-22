@@ -42,6 +42,16 @@ const Index = () => {
                 I'm a Vendor
               </Button>
             </div>
+            
+            {/* Admin Login Link */}
+            <div className="mt-8 text-center">
+              <button
+                onClick={() => navigate('/auth?role=admin')}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
+              >
+                Admin Login
+              </button>
+            </div>
           </div>
         </div>
       </div>
