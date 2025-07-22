@@ -7,10 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 import { 
-  Baby, 
-  Menu, 
-  X, 
+  Baby,
   Gift, 
   Shield, 
   Zap,
@@ -22,7 +21,6 @@ import {
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -87,7 +85,6 @@ const Index = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-    setIsMenuOpen(false);
   };
 
   const getTimeRemaining = (expiresAt: string | null) => {
@@ -134,127 +131,12 @@ const Index = () => {
     }
   };
 
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'offers', label: 'Offers', onClick: () => navigate('/offers') },
-    { id: 'about', label: 'About' },
-    { id: 'contact', label: 'Contact' },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#F9F9F9]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-      {/* Sticky Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <Baby className="w-8 h-8 text-[#9EB6CF]" />
-              <span className="text-xl font-semibold text-gray-900">BabyDeals</span>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => item.onClick ? item.onClick() : scrollToSection(item.id)}
-                  className="font-medium text-gray-600 hover:text-[#9EB6CF] transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
-              
-              {/* Login Dropdown */}
-              <div className="relative group">
-                <Button
-                  className="bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
-                >
-                  Join / Login
-                </Button>
-                
-                {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="py-2">
-                    <button
-                      onClick={() => navigate('/auth?role=mother')}
-                      className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
-                    >
-                      Join as Mom
-                    </button>
-                    <button
-                      onClick={() => navigate('/auth?role=vendor')}
-                      className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-[#9CD2C3]/10 hover:text-[#9EB6CF] transition-colors"
-                    >
-                      Join as Vendor
-                    </button>
-                    <div className="border-t my-1"></div>
-                    <button
-                      onClick={() => navigate('/auth?role=admin')}
-                      className="block w-full px-4 py-2 text-left text-gray-500 hover:bg-gray-50 transition-colors text-xs"
-                    >
-                      Admin Login
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-600 hover:text-[#9EB6CF] transition-colors"
-              >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden bg-white border-t">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {navItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => item.onClick ? item.onClick() : scrollToSection(item.id)}
-                    className="block w-full text-left px-3 py-2 font-medium text-gray-600 hover:text-[#9EB6CF] hover:bg-gray-50 transition-colors"
-                  >
-                    {item.label}
-                  </button>
-                ))}
-                
-                {/* Mobile Login Options */}
-                <div className="pt-2 border-t">
-                  <Button
-                    onClick={() => navigate('/auth?role=mother')}
-                    className="w-full mb-2 bg-[#9EB6CF] hover:bg-[#9EB6CF]/90 text-white"
-                  >
-                    Join as Mom
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/auth?role=vendor')}
-                    variant="outline"
-                    className="w-full mb-2 border-[#9CD2C3] text-[#9CD2C3] hover:bg-[#9CD2C3] hover:text-white"
-                  >
-                    Join as Vendor
-                  </Button>
-                  <button
-                    onClick={() => navigate('/auth?role=admin')}
-                    className="block w-full text-left px-3 py-2 text-xs text-gray-500 hover:text-gray-700 transition-colors"
-                  >
-                    Admin Login
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
+    <div className="min-h-screen bg-[#F9F9F9] font-outfit">
+      <Navbar />
 
       {/* Hero Section */}
-      <section id="home" className="pt-20 pb-16 bg-white">
+      <section id="home" className="pt-32 pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content */}

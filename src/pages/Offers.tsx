@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 import { Filter, ExternalLink, Star, X, Heart, Bookmark } from 'lucide-react';
 
 interface Offer {
@@ -240,8 +241,9 @@ const Offers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-green-50/50">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-green-50/50 font-outfit">
+      <Navbar />
+      <div className="max-w-7xl mx-auto p-6 pt-32">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div>

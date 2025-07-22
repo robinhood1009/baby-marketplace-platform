@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { Plus, Eye, Clock, CheckCircle, XCircle, Calendar, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format, differenceInDays, addDays } from 'date-fns';
+import { Navbar } from '@/components/Navbar';
 
 const offerSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -347,16 +348,15 @@ const VendorDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground">
-            Vendor Dashboard
-          </h1>
-          <Button onClick={signOut} variant="outline">
-            Sign Out
-          </Button>
-        </header>
+    <div className="min-h-screen bg-background font-outfit">
+      <Navbar />
+      <div className="p-4 pt-32">
+        <div className="max-w-6xl mx-auto">
+          <header className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-foreground">
+              Vendor Dashboard
+            </h1>
+          </header>
         
         <Tabs defaultValue="offers" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -843,6 +843,7 @@ const VendorDashboard = () => {
             )}
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );

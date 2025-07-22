@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 import { ArrowLeft, Heart, ExternalLink, Star } from 'lucide-react';
 
 interface Offer {
@@ -108,18 +109,12 @@ const SavedOffers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50/50 via-white to-purple-50/50">
-      <div className="max-w-7xl mx-auto p-6">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50/50 via-white to-purple-50/50 font-outfit">
+      <Navbar />
+      <div className="max-w-7xl mx-auto p-6 pt-32">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/offers')}
-              className="p-2 rounded-full hover:bg-white/50"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
             <div>
               <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
                 <Heart className="h-8 w-8 text-red-500 fill-red-500" />
@@ -130,9 +125,6 @@ const SavedOffers = () => {
               </p>
             </div>
           </div>
-          <Button onClick={signOut} variant="outline" className="border-[#9EB6CF] hover:bg-[#9EB6CF]/10">
-            Sign Out
-          </Button>
         </header>
 
         {/* Loading State */}

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -125,8 +126,10 @@ const Auth = () => {
       : 'Sell your products to loving families';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md animate-fade-in">
+    <div className="min-h-screen bg-background font-outfit">
+      <Navbar />
+      <div className="flex items-center justify-center bg-background p-4 pt-32">
+        <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
             {isAdminLogin 
@@ -199,6 +202,7 @@ const Auth = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

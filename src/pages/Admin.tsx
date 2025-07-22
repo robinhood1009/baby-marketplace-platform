@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 import { CheckCircle, XCircle, Star, Eye, Shield } from 'lucide-react';
 
 interface PendingOffer {
@@ -206,28 +207,27 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-3">
-            <Shield className="w-8 h-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Admin Panel
-              </h1>
-              <p className="text-muted-foreground">Manage pending offers and site content</p>
+    <div className="min-h-screen bg-background font-outfit">
+      <Navbar />
+      <div className="p-4 pt-32">
+        <div className="max-w-7xl mx-auto">
+          <header className="flex justify-between items-center mb-8">
+            <div className="flex items-center space-x-3">
+              <Shield className="w-8 h-8 text-primary" />
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">
+                  Admin Panel
+                </h1>
+                <p className="text-muted-foreground">Manage pending offers and site content</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Button onClick={() => navigate('/offers')} variant="outline">
-              <Eye className="w-4 h-4 mr-2" />
-              View Site
-            </Button>
-            <Button onClick={signOut} variant="outline">
-              Sign Out
-            </Button>
-          </div>
-        </header>
+            <div className="flex items-center space-x-3">
+              <Button onClick={() => navigate('/offers')} variant="outline">
+                <Eye className="w-4 h-4 mr-2" />
+                View Site
+              </Button>
+            </div>
+          </header>
 
         <Card className="animate-fade-in">
           <CardHeader>
@@ -323,6 +323,7 @@ const Admin = () => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

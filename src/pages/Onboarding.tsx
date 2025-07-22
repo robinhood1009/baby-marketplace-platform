@@ -9,6 +9,7 @@ import { format, differenceInMonths, differenceInYears } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Navbar } from '@/components/Navbar';
 import { cn } from '@/lib/utils';
 
 type BabyAgeGroup = '0-3 months' | '3-6 months' | '6-12 months' | '1-2 years' | '2-3 years' | '3+ years';
@@ -79,7 +80,9 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 font-outfit">
+      <Navbar />
+      <div className="flex items-center justify-center p-4 pt-32">
       <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-foreground">
@@ -142,6 +145,7 @@ const Onboarding = () => {
           </p>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };
