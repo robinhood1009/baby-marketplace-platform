@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               .from('profiles')
               .select('role, baby_age')
               .eq('user_id', session.user.id)
-              .single();
+              .maybeSingle();
             
             if (profile) {
               if (profile.role === 'mother' && !profile.baby_age) {
