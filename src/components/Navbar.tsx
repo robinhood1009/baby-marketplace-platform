@@ -5,31 +5,42 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Menu, Search, X } from 'lucide-react';
-
-const categories = [
-  'Essentials',
-  'Feeding', 
-  'Diapers',
-  'Toys & Play',
-  'Care',
-  'Health',
-  'Clothing',
-  'All Offers'
-];
+import { Menu, Search, LogOut } from 'lucide-react';
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchData = async () => {
+      // Fetch categories
+      try {
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from('categories')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
+
+        if (categoriesError) {
+          console.error('Error fetching categories:', categoriesError);
+        } else {
+          const allCategories = [...(categoriesData || []), { name: 'All Offers', slug: 'all' }];
+          setCategories(allCategories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+
+      // Fetch user profile if logged in
       if (!user) {
         setUserRole(null);
         return;
@@ -53,7 +64,7 @@ export const Navbar = () => {
       }
     };
 
-    fetchUserProfile();
+    fetchData();
   }, [user]);
 
   const getCategoryFromUrl = () => {
@@ -63,11 +74,38 @@ export const Navbar = () => {
 
   const activeCategory = getCategoryFromUrl();
 
-  const handleCategoryClick = (category: string) => {
-    if (category === 'All Offers') {
+  const handleCategoryClick = (category: any) => {
+    if (category.slug === 'all') {
       navigate('/offers');
     } else {
-      navigate(`/offers?category=${encodeURIComponent(category)}`);
+      navigate(`/offers?category=${encodeURIComponent(category.slug)}`);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast({
+          title: "Error signing out",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Signed out successfully",
+          description: "You have been signed out."
+        });
+        navigate('/');
+        setIsMenuOpen(false);
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast({
+        title: "Error signing out",
+        description: "Something went wrong.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -159,6 +197,21 @@ export const Navbar = () => {
                           {item.label}
                         </button>
                       ))}
+                      
+                      {/* Sign out button if user is logged in */}
+                      {user && (
+                        <>
+                          <div className="border-t border-gray-200 mt-4 pt-4">
+                            <button
+                              onClick={handleSignOut}
+                              className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 font-medium flex items-center gap-3"
+                            >
+                              <LogOut className="w-4 h-4" />
+                              Sign Out
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -220,12 +273,12 @@ export const Navbar = () => {
             <div className="flex space-x-1 min-w-max">
               {categories.map((category) => {
                 const isActive = 
-                  (category === 'All Offers' && location.pathname === '/offers' && !activeCategory) ||
-                  activeCategory === category;
+                  (category.slug === 'all' && location.pathname === '/offers' && !activeCategory) ||
+                  activeCategory === category.slug;
                 
                 return (
                   <button
-                    key={category}
+                    key={category.slug}
                     onClick={() => handleCategoryClick(category)}
                     className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                       isActive
@@ -233,7 +286,7 @@ export const Navbar = () => {
                         : 'text-gray-600 hover:text-primary hover:bg-primary/5'
                     }`}
                   >
-                    {category}
+                    {category.name}
                   </button>
                 );
               })}

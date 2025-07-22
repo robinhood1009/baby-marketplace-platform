@@ -19,34 +19,44 @@ import momBabyPromo from '@/assets/mom-baby-promo.jpg';
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [essentialsOffers, setEssentialsOffers] = useState<any[]>([]);
-  const [toysOffers, setToysOffers] = useState<any[]>([]);
+  const [categoryOffers, setCategoryOffers] = useState<{[key: string]: any[]}>({});
+  const [categories, setCategories] = useState<any[]>([]);
   const [newOffers, setNewOffers] = useState<any[]>([]);
-  const [vendors, setVendors] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Fetch offers and vendors
+  // Fetch offers, categories and brands
   useEffect(() => {
     const fetchData = async () => {
-      // Essentials offers
-      const { data: essentials } = await supabase
-        .from('offers')
+      // Get active categories
+      const { data: categoriesData } = await supabase
+        .from('categories')
         .select('*')
-        .eq('status', 'approved')
-        .eq('category', 'essentials')
-        .limit(6);
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .limit(2); // Get first 2 categories for homepage
       
-      if (essentials) setEssentialsOffers(essentials);
-
-      // Toys offers (using "toys" category)
-      const { data: toys } = await supabase
-        .from('offers')
-        .select('*')
-        .eq('status', 'approved')
-        .eq('category', 'toys')
-        .limit(6);
-      
-      if (toys) setToysOffers(toys);
+      if (categoriesData) {
+        setCategories(categoriesData);
+        
+        // Fetch offers for each category
+        const categoryOffersMap: {[key: string]: any[]} = {};
+        
+        for (const category of categoriesData) {
+          const { data: offers } = await supabase
+            .from('offers')
+            .select('*')
+            .eq('status', 'approved')
+            .eq('category', category.slug)
+            .limit(6);
+          
+          if (offers) {
+            categoryOffersMap[category.slug] = offers;
+          }
+        }
+        
+        setCategoryOffers(categoryOffersMap);
+      }
 
       // New this week
       const { data: newThisWeek } = await supabase
@@ -58,17 +68,19 @@ const Index = () => {
       
       if (newThisWeek) setNewOffers(newThisWeek);
 
-      // Get unique vendors from offers
-      const { data: allOffers } = await supabase
-        .from('offers')
-        .select('vendor_id')
-        .eq('status', 'approved')
-        .not('vendor_id', 'is', null);
+      // Create template brands with animation
+      const templateBrands = [
+        { name: "BabyFirst", logo: "🍼" },
+        { name: "TinyToes", logo: "👶" },
+        { name: "MomCare", logo: "👩‍👧‍👦" },
+        { name: "SafeBaby", logo: "🛡️" },
+        { name: "PlayTime", logo: "🧸" },
+        { name: "FeedWell", logo: "🥛" },
+        { name: "ComfyKid", logo: "🤗" },
+        { name: "PureBaby", logo: "🌟" },
+      ];
       
-      if (allOffers) {
-        const uniqueVendors = [...new Set(allOffers.map(o => o.vendor_id))];
-        setVendors(uniqueVendors.slice(0, 8));
-      }
+      setBrands(templateBrands);
     };
     
     fetchData();
@@ -196,21 +208,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Vendor Logos Section */}
-      <section className="py-12 bg-white">
+      {/* Brands Section with Animation */}
+      <section className="py-12 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
             Trusted by Leading Baby Brands
           </h2>
-          <div className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
-            {vendors.map((vendorId, index) => (
-              <div 
-                key={vendorId} 
-                className="flex-shrink-0 w-32 h-20 bg-white rounded-lg shadow-md border border-muted flex items-center justify-center hover:scale-110 transition-transform duration-300"
-              >
-                <span className="text-sm font-semibold text-gray-600">Brand {index + 1}</span>
-              </div>
-            ))}
+          <div className="relative">
+            <div className="flex animate-scroll gap-6">
+              {[...brands, ...brands].map((brand, index) => (
+                <div 
+                  key={`${brand.name}-${index}`}
+                  className="flex-shrink-0 w-32 h-20 bg-white rounded-lg shadow-md border border-muted flex flex-col items-center justify-center hover:scale-110 transition-all duration-300 hover:shadow-lg group"
+                  style={{
+                    animationDelay: `${index * 0.1}s`
+                  }}
+                >
+                  <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">{brand.logo}</span>
+                  <span className="text-xs font-semibold text-gray-600 group-hover:text-primary transition-colors">{brand.name}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -219,57 +237,38 @@ const Index = () => {
       <section id="offers-section" className="py-16 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Baby Essentials */}
-          <div className="mb-16">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">Baby Essentials</h2>
-              <Button 
-                variant="outline"
-                onClick={() => navigate('/offers?category=essentials')}
-                className="text-primary border-primary hover:bg-primary hover:text-white"
-              >
-                View All <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:hidden">
-              {essentialsOffers.slice(0, 3).map((offer) => (
-                <OfferCard key={offer.id} offer={offer} />
-              ))}
-            </div>
-            <div className="hidden md:flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
-              {essentialsOffers.map((offer) => (
-                <div key={offer.id} className="flex-shrink-0 w-80">
-                  <OfferCard offer={offer} />
+          {/* Dynamic Category Sections */}
+          {categories.map((category) => (
+            <div key={category.id} className="mb-16">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900">{category.name}</h2>
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate(`/offers?category=${category.slug}`)}
+                  className="text-primary border-primary hover:bg-primary hover:text-white"
+                >
+                  View All <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:hidden">
+                {categoryOffers[category.slug]?.slice(0, 3).map((offer) => (
+                  <OfferCard key={offer.id} offer={offer} />
+                ))}
+              </div>
+              <div className="hidden md:flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
+                {categoryOffers[category.slug]?.map((offer) => (
+                  <div key={offer.id} className="flex-shrink-0 w-80">
+                    <OfferCard offer={offer} />
+                  </div>
+                ))}
+              </div>
+              {(!categoryOffers[category.slug] || categoryOffers[category.slug].length === 0) && (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No offers available in this category yet.</p>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
-
-          {/* Toys & Learning */}
-          <div className="mb-16">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900">Toys & Learning</h2>
-              <Button 
-                variant="outline"
-                onClick={() => navigate('/offers?category=toys')}
-                className="text-primary border-primary hover:bg-primary hover:text-white"
-              >
-                View All <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:hidden">
-              {toysOffers.slice(0, 3).map((offer) => (
-                <OfferCard key={offer.id} offer={offer} />
-              ))}
-            </div>
-            <div className="hidden md:flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
-              {toysOffers.map((offer) => (
-                <div key={offer.id} className="flex-shrink-0 w-80">
-                  <OfferCard offer={offer} />
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
 
           {/* New This Week */}
           <div className="mb-16">

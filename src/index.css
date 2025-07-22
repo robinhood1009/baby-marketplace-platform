@@ -212,6 +212,15 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @layer utilities {
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
@@ -223,6 +232,10 @@ All colors MUST be HSL.
   
   .animate-heartbeat {
     animation: heartbeat 0.6s ease-in-out;
+  }
+  
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
   }
   
   .scrollbar-hide {
