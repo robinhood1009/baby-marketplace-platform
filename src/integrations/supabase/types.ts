@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      offers: {
+        Row: {
+          affiliate_link: string | null
+          age_range: string
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          status: string
+          title: string
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          affiliate_link?: string | null
+          age_range: string
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          status?: string
+          title: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          affiliate_link?: string | null
+          age_range?: string
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          status?: string
+          title?: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           baby_age: Database["public"]["Enums"]["baby_age_group"] | null
