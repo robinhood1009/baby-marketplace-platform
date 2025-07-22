@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          baby_age: Database["public"]["Enums"]["baby_age_group"] | null
+          baby_birthdate: string | null
           created_at: string
           id: string
           role: Database["public"]["Enums"]["user_role"]
@@ -23,6 +25,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
+          baby_birthdate?: string | null
           created_at?: string
           id?: string
           role: Database["public"]["Enums"]["user_role"]
@@ -30,6 +34,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
+          baby_birthdate?: string | null
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
@@ -46,6 +52,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      baby_age_group:
+        | "0-3 months"
+        | "3-6 months"
+        | "6-12 months"
+        | "1-2 years"
+        | "2-3 years"
+        | "3+ years"
       user_role: "mother" | "vendor"
     }
     CompositeTypes: {
@@ -174,6 +187,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      baby_age_group: [
+        "0-3 months",
+        "3-6 months",
+        "6-12 months",
+        "1-2 years",
+        "2-3 years",
+        "3+ years",
+      ],
       user_role: ["mother", "vendor"],
     },
   },

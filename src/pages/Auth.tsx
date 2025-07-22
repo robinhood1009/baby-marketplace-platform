@@ -26,13 +26,18 @@ const Auth = () => {
       const getUserProfile = async () => {
         const { data, error } = await supabase
           .from('profiles')
-          .select('role')
+          .select('role, baby_age')
           .eq('user_id', user.id)
           .single();
 
         if (data && !error) {
           if (data.role === 'mother') {
-            navigate('/offers');
+            // If mother hasn't completed onboarding, go to onboarding
+            if (!data.baby_age) {
+              navigate('/onboarding');
+            } else {
+              navigate('/offers');
+            }
           } else {
             navigate('/vendor-dashboard');
           }

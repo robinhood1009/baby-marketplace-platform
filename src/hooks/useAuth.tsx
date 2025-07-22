@@ -25,6 +25,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle redirect after sign up confirmation
+        if (event === 'SIGNED_IN' && session?.user) {
+          setTimeout(async () => {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role, baby_age')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            if (profile) {
+              if (profile.role === 'mother' && !profile.baby_age) {
+                window.location.href = '/onboarding';
+              } else if (profile.role === 'mother') {
+                window.location.href = '/offers';
+              } else if (profile.role === 'vendor') {
+                window.location.href = '/vendor-dashboard';
+              }
+            }
+          }, 100);
+        }
       }
     );
 
