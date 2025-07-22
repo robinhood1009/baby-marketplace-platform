@@ -230,8 +230,7 @@ const Index = () => {
             <Button
               onClick={() => navigate('/auth?role=vendor')}
               size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-primary font-semibold py-4 px-8 text-lg hover-scale"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary font-semibold py-4 px-8 text-lg hover-scale transition-all duration-200"
             >
               <Store className="w-5 h-5 mr-2" />
               I'm a Vendor
@@ -242,6 +241,105 @@ const Index = () => {
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
           <ChevronDown className="w-6 h-6 text-white/70" />
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 bg-gradient-to-r from-pink-50 via-blue-50 to-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              What Parents Are Saying
+            </h2>
+            <p className="text-gray-600">Real stories from families who found amazing deals</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in">
+              <div className="flex items-center mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy mom"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <p className="font-semibold text-gray-900">Sarah M.</p>
+                  <p className="text-sm text-gray-600">Mom of 1</p>
+                </div>
+              </div>
+              <blockquote className="text-gray-700 italic mb-4">
+                "I got a box of baby goodies in just 3 clicks. So convenient and my little one loves everything!"
+              </blockquote>
+              <div className="flex justify-center">
+                <img 
+                  src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&h=150&fit=crop" 
+                  alt="Baby items"
+                  className="w-32 h-24 rounded-lg object-cover opacity-80"
+                />
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="flex items-center mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy mom"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <p className="font-semibold text-gray-900">Aisha K.</p>
+                  <p className="text-sm text-gray-600">Mom of 2</p>
+                </div>
+              </div>
+              <blockquote className="text-gray-700 italic mb-4">
+                "Perfect timing! Got organic baby food samples right when we started solids. Saved us so much trial and error."
+              </blockquote>
+              <div className="flex justify-center">
+                <img 
+                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=150&fit=crop" 
+                  alt="Baby food"
+                  className="w-32 h-24 rounded-lg object-cover opacity-80"
+                />
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover-scale animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <div className="flex items-center mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face" 
+                  alt="Happy mom"
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <p className="font-semibold text-gray-900">Maria L.</p>
+                  <p className="text-sm text-gray-600">New Mom</p>
+                </div>
+              </div>
+              <blockquote className="text-gray-700 italic mb-4">
+                "As a new mom, finding trusted brands felt overwhelming. This platform made it so easy to discover quality products."
+              </blockquote>
+              <div className="flex justify-center">
+                <img 
+                  src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200&h=150&fit=crop" 
+                  alt="Baby clothes"
+                  className="w-32 h-24 rounded-lg object-cover opacity-80"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Trust indicators */}
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 mb-4">Trusted by over 10,000 families</p>
+            <div className="flex justify-center space-x-8 items-center opacity-60">
+              <div className="text-sm font-medium">⭐ 4.9/5 rating</div>
+              <div className="text-sm font-medium">🛡️ Verified offers</div>
+              <div className="text-sm font-medium">📦 2M+ products delivered</div>
+            </div>
+          </div>
         </div>
       </section>
 
