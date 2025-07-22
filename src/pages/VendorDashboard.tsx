@@ -73,10 +73,15 @@ const VendorDashboard = () => {
   useEffect(() => {
     if (user) {
       checkVendorAccess();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (profile) {
       fetchOffers();
       fetchAds();
     }
-  }, [user]);
+  }, [profile]);
 
   // Handle payment success on page load
   useEffect(() => {
@@ -117,12 +122,12 @@ const VendorDashboard = () => {
   };
 
   const fetchOffers = async () => {
-    if (!user) return;
+    if (!user || !profile) return;
 
     const { data, error } = await supabase
       .from('offers')
       .select('*')
-      .eq('vendor_id', user.id)
+      .eq('vendor_id', profile.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -158,7 +163,7 @@ const VendorDashboard = () => {
   };
 
   const onSubmit = async (data: OfferFormData) => {
-    if (!user) return;
+    if (!user || !profile) return;
 
     const offerData = {
       title: data.title,
@@ -167,7 +172,7 @@ const VendorDashboard = () => {
       category: data.category,
       affiliate_link: data.affiliate_link || null,
       image_url: data.image_url || null,
-      vendor_id: user.id,
+      vendor_id: profile.id,
       status: 'pending' as const
     };
 
