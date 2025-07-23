@@ -184,6 +184,7 @@ export type Database = {
           affiliate_link: string | null
           age_range: string
           category: string
+          category_id: string | null
           created_at: string
           description: string
           discount_percent: number | null
@@ -201,6 +202,7 @@ export type Database = {
           affiliate_link?: string | null
           age_range: string
           category: string
+          category_id?: string | null
           created_at?: string
           description: string
           discount_percent?: number | null
@@ -218,6 +220,7 @@ export type Database = {
           affiliate_link?: string | null
           age_range?: string
           category?: string
+          category_id?: string | null
           created_at?: string
           description?: string
           discount_percent?: number | null
@@ -232,6 +235,13 @@ export type Database = {
           vendor_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "offers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offers_vendor_id_fkey"
             columns: ["vendor_id"]
