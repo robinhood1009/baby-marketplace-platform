@@ -47,7 +47,7 @@ const Index = () => {
             .from('offers')
             .select('*')
             .eq('status', 'approved')
-            .eq('category', category.slug)
+            .eq('category_id', category.id)
             .limit(6);
           
           if (offers) {
