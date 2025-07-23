@@ -40,7 +40,20 @@ const Offers = () => {
 
   // Available filter options
   const ageRanges = ['0-6 months', '6-12 months', '12-36 months', '0-24 months', '3-18 months', '18-36 months'];
-  const categories = ['Food & Nutrition', 'Toys & Development', 'Health & Safety', 'Books & Resources', 'Furniture & Gear'];
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    // Check URL parameters for category filter
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    if (categoryParam && categoryParam !== selectedCategory) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [window.location.search]);
 
   useEffect(() => {
     fetchOffers();
@@ -65,6 +78,21 @@ const Offers = () => {
       setFavorites(favoriteIds);
     } catch (error) {
       console.error('Error fetching favorites:', error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
     }
   };
 
@@ -100,7 +128,11 @@ const Offers = () => {
       }
 
       if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
+        // Find category by slug and filter by category_id
+        const categoryData = categories.find(cat => cat.slug === selectedCategory);
+        if (categoryData) {
+          query = query.eq('category_id', categoryData.id);
+        }
       }
 
       // Apply sorting
@@ -144,7 +176,10 @@ const Offers = () => {
             filteredTrending = filteredTrending.filter(offer => offer.age_range === selectedAgeRange);
           }
           if (selectedCategory !== 'all') {
-            filteredTrending = filteredTrending.filter(offer => offer.category === selectedCategory);
+            const categoryData = categories.find(cat => cat.slug === selectedCategory);
+            if (categoryData) {
+              filteredTrending = filteredTrending.filter(offer => offer.category_id === categoryData.id);
+            }
           }
           
           // Sort by click count descending
@@ -324,8 +359,8 @@ const Offers = () => {
                 <SelectContent>
                   <SelectItem value="all">All categories</SelectItem>
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
+                    <SelectItem key={category.id} value={category.slug}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
