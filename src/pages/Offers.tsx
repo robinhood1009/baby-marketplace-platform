@@ -53,7 +53,18 @@ const Offers = () => {
     if (categoryParam && categoryParam !== selectedCategory) {
       setSelectedCategory(categoryParam);
     }
-  }, [window.location.search]);
+  }, [window.location.search, selectedCategory]);
+
+  // Additional effect to handle URL params after categories are loaded
+  useEffect(() => {
+    if (categories.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryParam = urlParams.get('category');
+      if (categoryParam && categoryParam !== selectedCategory) {
+        setSelectedCategory(categoryParam);
+      }
+    }
+  }, [categories, selectedCategory]);
 
   useEffect(() => {
     fetchOffers();
