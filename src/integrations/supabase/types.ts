@@ -183,6 +183,7 @@ export type Database = {
         Row: {
           affiliate_link: string | null
           age_range: string
+          brand: string | null
           category: string
           category_id: string | null
           created_at: string
@@ -201,6 +202,7 @@ export type Database = {
         Insert: {
           affiliate_link?: string | null
           age_range: string
+          brand?: string | null
           category: string
           category_id?: string | null
           created_at?: string
@@ -219,6 +221,7 @@ export type Database = {
         Update: {
           affiliate_link?: string | null
           age_range?: string
+          brand?: string | null
           category?: string
           category_id?: string | null
           created_at?: string

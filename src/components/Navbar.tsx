@@ -268,9 +268,9 @@ export const Navbar = () => {
 
       {/* Bottom section: Category navigation */}
       <div className="bg-gray-50/80 backdrop-blur-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-3 overflow-x-auto scrollbar-hide">
-            <div className="flex space-x-1 min-w-max">
+        <div className="w-full">
+          <div className="flex items-center justify-center py-3 overflow-x-auto scrollbar-hide">
+            <div className="flex space-x-1 w-full max-w-7xl px-4 sm:px-6 lg:px-8 justify-center">
               {categories.map((category) => {
                 const isActive = 
                   (category.slug === 'all' && location.pathname === '/offers' && !activeCategory) ||
@@ -280,7 +280,7 @@ export const Navbar = () => {
                   <button
                     key={category.slug}
                     onClick={() => handleCategoryClick(category)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                    className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                       isActive
                         ? 'bg-primary text-primary-foreground font-bold border-b-2 border-primary shadow-sm'
                         : 'text-gray-600 hover:text-primary hover:bg-primary/5'

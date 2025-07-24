@@ -138,21 +138,33 @@ const Index = () => {
       </div>
       
       <CardContent className="p-4">
-        <h3 className="font-bold text-lg mb-2 text-gray-900 line-clamp-1">
+        <h3 className="font-bold text-lg mb-1 text-gray-900 line-clamp-1">
           {offer.title}
         </h3>
+        
+        {offer.brand && (
+          <p className="text-sm text-gray-500 mb-2 font-medium">
+            {offer.brand}
+          </p>
+        )}
         
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">
           {offer.description}
         </p>
 
-        {offer.price !== null && (
-          <div className="mb-3">
+        <div className="flex items-center justify-between mb-3">
+          {offer.price !== null && (
             <span className="text-xl font-bold text-primary">
               ${offer.price}
             </span>
-          </div>
-        )}
+          )}
+          
+          {offer.discount_percent && (
+            <Badge className="bg-red-500 text-white font-bold">
+              {offer.discount_percent}% OFF
+            </Badge>
+          )}
+        </div>
         
         <Button 
           onClick={() => handleOfferClick(offer.affiliate_link)}
