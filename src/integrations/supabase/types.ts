@@ -26,7 +26,7 @@ export type Database = {
           start_date: string
           stripe_session_id: string | null
           updated_at: string
-          vendor_id: string
+          vendor_id: string | null
         }
         Insert: {
           created_at?: string
@@ -39,7 +39,7 @@ export type Database = {
           start_date: string
           stripe_session_id?: string | null
           updated_at?: string
-          vendor_id: string
+          vendor_id?: string | null
         }
         Update: {
           created_at?: string
@@ -52,14 +52,49 @@ export type Database = {
           start_date?: string
           stripe_session_id?: string | null
           updated_at?: string
-          vendor_id?: string
+          vendor_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "ads_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brands: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brands_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -183,7 +218,7 @@ export type Database = {
         Row: {
           affiliate_link: string | null
           age_range: string
-          brand: string | null
+          brand_id: string | null
           category: string
           category_id: string | null
           created_at: string
@@ -197,12 +232,11 @@ export type Database = {
           status: string
           title: string
           updated_at: string
-          vendor_id: string | null
         }
         Insert: {
           affiliate_link?: string | null
           age_range: string
-          brand?: string | null
+          brand_id?: string | null
           category: string
           category_id?: string | null
           created_at?: string
@@ -216,12 +250,11 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
-          vendor_id?: string | null
         }
         Update: {
           affiliate_link?: string | null
           age_range?: string
-          brand?: string | null
+          brand_id?: string | null
           category?: string
           category_id?: string | null
           created_at?: string
@@ -235,21 +268,20 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
-          vendor_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "offers_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offers_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "offers_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -263,6 +295,7 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
+          vendor_id: string | null
         }
         Insert: {
           baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
@@ -272,6 +305,7 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
+          vendor_id?: string | null
         }
         Update: {
           baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
@@ -281,6 +315,45 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

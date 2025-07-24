@@ -45,7 +45,14 @@ const Index = () => {
         for (const category of categoriesData) {
           const { data: offers } = await supabase
             .from('offers')
-            .select('*')
+            .select(`
+              *,
+              brands (
+                id,
+                name,
+                image_url
+              )
+            `)
             .eq('status', 'approved')
             .eq('category_id', category.id)
             .limit(6);
@@ -61,7 +68,14 @@ const Index = () => {
       // New this week
       const { data: newThisWeek } = await supabase
         .from('offers')
-        .select('*')
+        .select(`
+          *,
+          brands (
+            id,
+            name,
+            image_url
+          )
+        `)
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(6);
@@ -142,10 +156,19 @@ const Index = () => {
           {offer.title}
         </h3>
         
-        {offer.brand && (
-          <p className="text-sm text-gray-500 mb-2 font-medium">
-            {offer.brand}
-          </p>
+        {offer.brands && (
+          <div className="flex items-center gap-2 mb-2">
+            {offer.brands.image_url && (
+              <img 
+                src={offer.brands.image_url} 
+                alt={offer.brands.name}
+                className="w-6 h-6 rounded-full object-cover"
+              />
+            )}
+            <p className="text-sm text-gray-500 font-medium">
+              {offer.brands.name}
+            </p>
+          </div>
         )}
         
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">
