@@ -124,6 +124,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         console.log('Profile created successfully with role:', role); // Debug log
       }
+      
+      // Small delay to ensure profile is created before any redirects
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     return { error };
