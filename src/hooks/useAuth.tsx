@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // For non-admin users, fetch profile
             const { data: profile, error } = await supabase
               .from('profiles')
-              .select('role, baby_age')
+              .select('role, baby_age, vendor_id')
               .eq('user_id', session.user.id)
               .maybeSingle();
             
@@ -65,6 +65,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               } else if (profile.role === 'mother') {
                 if (currentPath !== '/offers') {
                   window.location.href = '/offers';
+                }
+              } else if (profile.role === 'vendor' && !profile.vendor_id) {
+                if (currentPath !== '/onboarding') {
+                  window.location.href = '/onboarding';
                 }
               } else if (profile.role === 'vendor') {
                 if (currentPath !== '/vendor-dashboard') {
