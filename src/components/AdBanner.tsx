@@ -8,8 +8,9 @@ interface Ad {
   start_date: string;
   end_date: string;
   paid: boolean;
-  profiles?: {
+  vendors?: {
     id: string;
+    name: string;
   };
 }
 
@@ -43,8 +44,9 @@ const AdBanner = () => {
         start_date,
         end_date,
         paid,
-        profiles!vendor_id (
-          id
+        vendors!vendor_id (
+          id,
+          name
         )
       `)
       .eq('paid', true)

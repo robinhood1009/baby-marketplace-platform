@@ -133,8 +133,8 @@ const VendorDashboard = () => {
 
     const { data, error } = await supabase
       .from('offers')
-      .select('*')
-      .eq('vendor_id', profile.id)
+      .select('*, brands!brand_id(name)')
+      .eq('brands.vendor_id', profile.vendor_id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -155,7 +155,7 @@ const VendorDashboard = () => {
     const { data, error } = await supabase
       .from('ads')
       .select('*')
-      .eq('vendor_id', profile.id)
+      .eq('vendor_id', profile.vendor_id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -179,7 +179,7 @@ const VendorDashboard = () => {
       category: data.category,
       affiliate_link: data.affiliate_link || null,
       image_url: data.image_url || null,
-      vendor_id: profile.id,
+      brand_id: null, // Will need to be set when vendor creates a brand
       status: 'pending' as const
     };
 
@@ -226,7 +226,7 @@ const VendorDashboard = () => {
       const { data: adData, error: adError } = await supabase
         .from('ads')
         .insert({
-          vendor_id: profile.id,
+          vendor_id: profile.vendor_id,
           start_date: data.start_date,
           end_date: data.end_date,
           image_url: data.image_url,
