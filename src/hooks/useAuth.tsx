@@ -110,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!error && data.user) {
       // Create profile since the trigger doesn't work on auth.users
+      console.log('Creating profile with role:', role); // Debug log
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -120,6 +121,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (profileError) {
         console.error('Error creating profile:', profileError);
         // Don't return error here as user was created successfully
+      } else {
+        console.log('Profile created successfully with role:', role); // Debug log
       }
     }
 
