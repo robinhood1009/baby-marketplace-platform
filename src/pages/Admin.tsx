@@ -21,7 +21,7 @@ interface PendingOffer {
   image_url: string | null;
   is_featured: boolean;
   created_at: string;
-  brand_id: string | null;
+  vendor_id: string;
 }
 
 const Admin = () => {

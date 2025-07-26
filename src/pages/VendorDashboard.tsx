@@ -133,8 +133,8 @@ const VendorDashboard = () => {
 
     const { data, error } = await supabase
       .from('offers')
-      .select('*, brands!brand_id(name)')
-      .eq('brands.vendor_id', profile.vendor_id)
+      .select('*')
+      .eq('vendor_id', profile.vendor_id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -179,7 +179,7 @@ const VendorDashboard = () => {
       category: data.category,
       affiliate_link: data.affiliate_link || null,
       image_url: data.image_url || null,
-      brand_id: null, // Will need to be set when vendor creates a brand
+      vendor_id: profile.vendor_id,
       status: 'pending' as const
     };
 

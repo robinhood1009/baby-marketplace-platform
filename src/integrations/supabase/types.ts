@@ -218,7 +218,6 @@ export type Database = {
         Row: {
           affiliate_link: string | null
           age_range: string
-          brand_id: string | null
           category: string
           category_id: string | null
           created_at: string
@@ -232,11 +231,11 @@ export type Database = {
           status: string
           title: string
           updated_at: string
+          vendor_id: string
         }
         Insert: {
           affiliate_link?: string | null
           age_range: string
-          brand_id?: string | null
           category: string
           category_id?: string | null
           created_at?: string
@@ -250,11 +249,11 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string
+          vendor_id: string
         }
         Update: {
           affiliate_link?: string | null
           age_range?: string
-          brand_id?: string | null
           category?: string
           category_id?: string | null
           created_at?: string
@@ -268,15 +267,9 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
+          vendor_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "offers_brand_id_fkey"
-            columns: ["brand_id"]
-            isOneToOne: false
-            referencedRelation: "brands"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "offers_category_id_fkey"
             columns: ["category_id"]
@@ -330,6 +323,7 @@ export type Database = {
       vendors: {
         Row: {
           address: string | null
+          brand_id: string | null
           created_at: string
           email: string | null
           id: string
@@ -339,6 +333,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          brand_id?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -348,6 +343,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          brand_id?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -355,7 +351,15 @@ export type Database = {
           phone?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vendors_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -23,12 +23,11 @@ interface Offer {
   discount_percent: number | null;
   price: number | null;
   expires_at: string | null;
-  brand_id: string | null;
-  brands?: {
+  vendor_id: string;
+  vendors?: {
     id: string;
     name: string;
-    image_url: string | null;
-  };
+  } | null;
 }
 
 const Offers = () => {
@@ -39,9 +38,9 @@ const Offers = () => {
   const [loading, setLoading] = useState(true);
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedBrand, setSelectedBrand] = useState<string>('all');
+  const [selectedVendor, setSelectedVendor] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('newest');
-  const [brands, setBrands] = useState<any[]>([]);
+  const [vendors, setVendors] = useState<any[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
