@@ -45,7 +45,13 @@ const Index = () => {
         for (const category of categoriesData) {
           const { data: offers } = await supabase
             .from('offers')
-            .select('*')
+            .select(`
+              *,
+              vendors(
+                name,
+                brands(name, image_url)
+              )
+            `)
             .eq('status', 'approved')
             .eq('category_id', category.id)
             .limit(6);
@@ -61,7 +67,13 @@ const Index = () => {
       // New this week
       const { data: newThisWeek } = await supabase
         .from('offers')
-        .select('*')
+        .select(`
+          *,
+          vendors(
+            name,
+            brands(name, image_url)
+          )
+        `)
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(8);
@@ -132,6 +144,18 @@ const Index = () => {
       </div>
       
       <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          {offer.vendors?.brands?.image_url && (
+            <img 
+              src={offer.vendors.brands.image_url} 
+              alt={offer.vendors.brands.name}
+              className="w-6 h-6 object-contain"
+            />
+          )}
+          <span className="text-sm font-medium text-gray-700">
+            {offer.vendors?.brands?.name || offer.vendors?.name || 'Brand'}
+          </span>
+        </div>
         <h3 className="font-bold text-lg mb-1 text-gray-900 line-clamp-1">
           {offer.title}
         </h3>
