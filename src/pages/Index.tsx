@@ -49,7 +49,7 @@ const Index = () => {
               *,
               vendors(
                 name,
-                brands(name, image_url)
+                brands!fk_brands_vendor_id(name, image_url)
               )
             `)
             .eq('status', 'approved')
@@ -71,7 +71,7 @@ const Index = () => {
           *,
           vendors(
             name,
-            brands(name, image_url)
+            brands!fk_brands_vendor_id(name, image_url)
           )
         `)
         .eq('status', 'approved')

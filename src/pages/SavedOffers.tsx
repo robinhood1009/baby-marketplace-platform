@@ -43,7 +43,7 @@ const SavedOffers = () => {
         .from('favorites')
         .select(`
           offer_id,
-          offers (
+          offers!fk_favorites_offer_id (
             id,
             title,
             description,
