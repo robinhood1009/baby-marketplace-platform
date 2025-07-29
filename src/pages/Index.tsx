@@ -68,19 +68,13 @@ const Index = () => {
       
       if (newThisWeek) setNewOffers(newThisWeek);
 
-      // Create template brands with animation
-      const templateBrands = [
-        { name: "BabyFirst", logo: "🍼" },
-        { name: "TinyToes", logo: "👶" },
-        { name: "MomCare", logo: "👩‍👧‍👦" },
-        { name: "SafeBaby", logo: "🛡️" },
-        { name: "PlayTime", logo: "🧸" },
-        { name: "FeedWell", logo: "🥛" },
-        { name: "ComfyKid", logo: "🤗" },
-        { name: "PureBaby", logo: "🌟" },
-      ];
+      // Fetch real brands from database
+      const { data: brandsData } = await supabase
+        .from('brands')
+        .select('*')
+        .order('name', { ascending: true });
       
-      setBrands(templateBrands);
+      if (brandsData) setBrands(brandsData);
     };
     
     fetchData();
@@ -224,13 +218,22 @@ const Index = () => {
               {[...brands, ...brands].map((brand, index) => (
                 <div 
                   key={`${brand.name}-${index}`}
-                  className="flex-shrink-0 w-32 h-20 bg-white rounded-lg shadow-md border border-muted flex flex-col items-center justify-center hover:scale-110 transition-all duration-300 hover:shadow-lg group"
+                  className="flex-shrink-0 w-40 h-24 bg-white rounded-lg shadow-md border border-muted flex items-center justify-center hover:scale-110 transition-all duration-300 hover:shadow-lg group p-3"
                   style={{
                     animationDelay: `${index * 0.1}s`
                   }}
                 >
-                  <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">{brand.logo}</span>
-                  <span className="text-xs font-semibold text-gray-600 group-hover:text-primary transition-colors">{brand.name}</span>
+                  {brand.image_url ? (
+                    <img 
+                      src={brand.image_url} 
+                      alt={brand.name}
+                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <span className="text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors text-center">
+                      {brand.name}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
