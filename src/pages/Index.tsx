@@ -374,7 +374,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div>
-              <h3 className="text-xl font-bold mb-4">BabyBag Deals</h3>
+              <h3 className="text-xl font-bold mb-4">my-babydays</h3>
               <p className="text-gray-400">
                 Your trusted source for baby deals, samples, and trusted brand recommendations.
               </p>
@@ -423,7 +423,7 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 BabyBag Deals. All rights reserved.</p>
+            <p>&copy; 2024 my-babydays. All rights reserved.</p>
           </div>
         </div>
       </footer>

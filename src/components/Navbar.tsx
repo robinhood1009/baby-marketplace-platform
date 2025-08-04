@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Menu, Search, LogOut } from 'lucide-react';
+import { Menu, Search, LogOut, User, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -134,7 +135,7 @@ export const Navbar = () => {
   });
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md font-outfit">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-card shadow-md font-outfit">
       {/* Top section */}
       <div className="border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -143,7 +144,7 @@ export const Navbar = () => {
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="sm" className="p-2">
-                  <Menu className="h-6 w-6 text-gray-700" />
+                  <Menu className="h-6 w-6 text-foreground" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-80 p-0 font-outfit">
@@ -223,51 +224,100 @@ export const Navbar = () => {
               className="cursor-pointer flex items-center"
               onClick={() => navigate('/')}
             >
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                BabyBag Deals
+              <h1 className="text-2xl font-bold text-primary">
+                my-babydays
               </h1>
             </div>
 
-            {/* Right: Search icon */}
-            <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-2">
-                  <Search className="h-6 w-6 text-gray-700" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md font-outfit">
-                <form onSubmit={handleSearch} className="space-y-4">
-                  <div className="space-y-2">
-                    <h2 className="text-lg font-semibold">Search Offers</h2>
-                    <Input
-                      placeholder="Search for baby products..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
-                      Search
+            {/* Right: Account menu and Search */}
+            <div className="flex items-center gap-2">
+              {/* Account Menu */}
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-2 text-foreground">
+                      <User className="h-4 w-4" />
+                      <span className="hidden sm:inline">{user.email}</span>
+                      <ChevronDown className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setIsSearchOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem className="flex flex-col items-start">
+                      <div className="font-medium">{user.email}</div>
+                      {userRole && (
+                        <div className="text-sm text-muted-foreground capitalize">{userRole}</div>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/onboarding')}>
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate('/auth')}
+                    className="text-foreground"
+                  >
+                    Log In
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => navigate('/auth')}
+                    className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              )}
+              
+              {/* Search icon */}
+              <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-2">
+                    <Search className="h-6 w-6 text-foreground" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md font-outfit">
+                  <form onSubmit={handleSearch} className="space-y-4">
+                    <div className="space-y-2">
+                      <h2 className="text-lg font-semibold">Search Offers</h2>
+                      <Input
+                        placeholder="Search for baby products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full"
+                        autoFocus
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
+                        Search
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setIsSearchOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom section: Category navigation */}
-      <div className="bg-gray-50/80 backdrop-blur-sm border-b border-gray-100">
+      <div className="bg-muted/50 backdrop-blur-sm border-b border-border">
         <div className="w-full">
           <div className="flex items-center justify-center py-3 overflow-x-auto scrollbar-hide">
             <div className="flex space-x-1 w-full max-w-7xl px-4 sm:px-6 lg:px-8 justify-center">
