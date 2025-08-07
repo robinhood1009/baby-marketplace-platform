@@ -19,6 +19,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+                monoton: ['Monoton', 'cursive'],
                 quicksand: ['Quicksand', 'sans-serif'],
 				sans: ['Outfit', 'system-ui', 'sans-serif'],
 				outfit: ['Outfit', 'sans-serif'],
