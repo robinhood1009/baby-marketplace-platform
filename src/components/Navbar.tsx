@@ -129,7 +129,7 @@ export const Navbar = () => {
   const menuItems = [
     { label: 'Home', path: '/' },
     { label: 'Browse Offers', path: '/offers' },
-    { label: 'My Saved Offers', path: '/saved-offers', authRequired: true },
+    { label: 'My Saved Offers', path: '/saved-offers', authRequired: true, hideForRoles: ['admin'] },
     { label: 'Vendor Dashboard', path: '/vendor-dashboard', role: 'vendor' },
     { label: 'Admin Panel', path: '/admin', role: 'admin' },
     { label: 'About', path: '/#about' },
@@ -137,6 +137,7 @@ export const Navbar = () => {
   ];
 
   const filteredMenuItems = menuItems.filter(item => {
+    if ((item as any).hideForRoles && userRole && (item as any).hideForRoles.includes(userRole)) return false;
     if (item.authRequired && !user) return false;
     if (item.role && userRole !== item.role) return false;
     return true;
