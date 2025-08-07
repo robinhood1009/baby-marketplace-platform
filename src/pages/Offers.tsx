@@ -31,7 +31,7 @@ interface Offer {
 }
 
 const Offers = () => {
-  const { signOut, user } = useAuth();
+  const { signOut, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [featuredOffers, setFeaturedOffers] = useState<Offer[]>([]);
@@ -48,6 +48,12 @@ const Offers = () => {
   // Available filter options
   const ageRanges = ['0-6 months', '6-12 months', '12-36 months', '0-24 months', '3-18 months', '18-36 months'];
   const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [authLoading, user, navigate]);
 
   useEffect(() => {
     fetchCategories();
