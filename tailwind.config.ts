@@ -17,10 +17,11 @@ export default {
 				'2xl': '1400px'
 			}
 		},
-		extend: {
 			fontFamily: {
 				sans: ['Outfit', 'system-ui', 'sans-serif'],
 				outfit: ['Outfit', 'sans-serif'],
+				quicksand: ['Quicksand', 'sans-serif'],
+				logo: ['Quicksand', 'Outfit', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
