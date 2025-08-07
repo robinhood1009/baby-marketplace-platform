@@ -209,7 +209,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background font-outfit">
       <Navbar />
-      <div className="p-4 pt-64">
+      <div className="p-4 pt-128">
         <div className="max-w-7xl mx-auto">
           <header className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-3">
