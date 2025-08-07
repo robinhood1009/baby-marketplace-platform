@@ -47,6 +47,13 @@ export const Navbar = () => {
         return;
       }
 
+      // Treat the special admin account by email
+      const email = user.email?.toLowerCase();
+      if (email === 'admin@yourdomain.com') {
+        setUserRole('admin');
+        return;
+      }
+
       try {
         const { data: profile, error } = await supabase
           .from('profiles')
@@ -170,6 +177,15 @@ export const Navbar = () => {
                       >
                         🏪 I'm a Vendor
                       </Button>
+                      <Button
+                        onClick={() => {
+                          navigate('/auth?role=admin');
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0 rounded-xl shadow-lg"
+                      >
+                        🔐 Admin Login
+                      </Button>
                     </div>
                   </div>
 
@@ -258,23 +274,31 @@ export const Navbar = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate('/auth')}
-                    className="text-foreground"
-                  >
-                    Log In
-                  </Button>
-                  <Button 
-                    size="sm"
-                    onClick={() => navigate('/auth')}
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground"
-                  >
-                    Sign Up
-                  </Button>
-                </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate('/auth')}
+                      className="text-foreground"
+                    >
+                      Log In
+                    </Button>
+                    <Button 
+                      size="sm"
+                      onClick={() => navigate('/auth')}
+                      className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                    >
+                      Sign Up
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate('/auth?role=admin')}
+                      className="text-foreground"
+                    >
+                      Admin Login
+                    </Button>
+                  </div>
               )}
               
               {/* Search icon */}
