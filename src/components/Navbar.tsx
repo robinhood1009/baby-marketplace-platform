@@ -131,6 +131,7 @@ export const Navbar = () => {
     { label: 'Browse Offers', path: '/offers' },
     { label: 'My Saved Offers', path: '/saved-offers', authRequired: true },
     { label: 'Vendor Dashboard', path: '/vendor-dashboard', role: 'vendor' },
+    { label: 'Admin Panel', path: '/admin', role: 'admin' },
     { label: 'About', path: '/#about' },
     { label: 'Contact', path: '/#contact' },
   ];
@@ -156,38 +157,40 @@ export const Navbar = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-80 p-0 font-outfit">
                 <div className="flex flex-col h-full">
-                  {/* Top buttons */}
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="space-y-3">
-                      <Button
-                        onClick={() => {
-                          navigate('/auth?role=mother');
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white border-0 rounded-xl shadow-lg"
-                      >
-                        👩 I'm a Mom
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          navigate('/auth?role=vendor');
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white border-0 rounded-xl shadow-lg"
-                      >
-                        🏪 I'm a Vendor
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          navigate('/auth?role=admin');
-                          setIsMenuOpen(false);
-                        }}
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0 rounded-xl shadow-lg"
-                      >
-                        🔐 Admin Login
-                      </Button>
+                  {/* Top buttons (only when logged out) */}
+                  {!user && (
+                    <div className="p-6 border-b border-gray-100">
+                      <div className="space-y-3">
+                        <Button
+                          onClick={() => {
+                            navigate('/auth?role=mother');
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white border-0 rounded-xl shadow-lg"
+                        >
+                          👩 I'm a Mom
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            navigate('/auth?role=vendor');
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white border-0 rounded-xl shadow-lg"
+                        >
+                          🏪 I'm a Vendor
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            navigate('/auth?role=admin');
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground border-0 rounded-xl shadow-lg"
+                        >
+                          🔐 Admin Login
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Menu links */}
                   <div className="flex-1 p-6">
