@@ -129,7 +129,7 @@ export const Navbar = () => {
   const menuItems = [
     { label: 'Home', path: '/' },
     { label: 'Browse Offers', path: '/offers' },
-    { label: 'My Saved Offers', path: '/saved-offers', authRequired: true, hideForRoles: ['admin'] },
+    { label: 'My Saved Offers', path: '/saved-offers', authRequired: true, hideForRoles: ['admin', 'vendor'] },
     { label: 'Vendor Dashboard', path: '/vendor-dashboard', role: 'vendor' },
     { label: 'Admin Panel', path: '/admin', role: 'admin' },
     { label: 'About', path: '/#about' },
