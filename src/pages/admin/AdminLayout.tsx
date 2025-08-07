@@ -35,8 +35,8 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-background font-outfit">
       <Navbar />
-      <SidebarProvider className="mt-16">
-        <div className="min-h-screen flex w-full">
+      <SidebarProvider>
+        <div className="min-h-screen mt-16 flex w-full">
           <AdminSidebar />
           <SidebarInset>
             <header className="flex h-12 items-center gap-2 border-b px-4">
