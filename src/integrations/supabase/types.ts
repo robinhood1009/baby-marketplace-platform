@@ -180,22 +180,28 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_read: boolean
           message: string
           name: string
+          subject: string | null
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
+          is_read?: boolean
           message: string
           name: string
+          subject?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          is_read?: boolean
           message?: string
           name?: string
+          subject?: string | null
         }
         Relationships: []
       }
@@ -319,7 +325,9 @@ export type Database = {
           baby_age: Database["public"]["Enums"]["baby_age_group"] | null
           baby_birthdate: string | null
           created_at: string
+          email: string | null
           id: string
+          is_active: boolean
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
@@ -329,7 +337,9 @@ export type Database = {
           baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
           baby_birthdate?: string | null
           created_at?: string
+          email?: string | null
           id?: string
+          is_active?: boolean
           role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
@@ -339,7 +349,9 @@ export type Database = {
           baby_age?: Database["public"]["Enums"]["baby_age_group"] | null
           baby_birthdate?: string | null
           created_at?: string
+          email?: string | null
           id?: string
+          is_active?: boolean
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
@@ -364,6 +376,7 @@ export type Database = {
           id: string
           name: string
           phone: string | null
+          suspended: boolean
           updated_at: string
         }
         Insert: {
@@ -374,6 +387,7 @@ export type Database = {
           id?: string
           name: string
           phone?: string | null
+          suspended?: boolean
           updated_at?: string
         }
         Update: {
@@ -384,6 +398,7 @@ export type Database = {
           id?: string
           name?: string
           phone?: string | null
+          suspended?: boolean
           updated_at?: string
         }
         Relationships: [
