@@ -278,31 +278,7 @@ export const Navbar = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => navigate('/auth')}
-                      className="text-foreground"
-                    >
-                      Log In
-                    </Button>
-                    <Button 
-                      size="sm"
-                      onClick={() => navigate('/auth')}
-                      className="bg-accent hover:bg-accent/90 text-accent-foreground"
-                    >
-                      Sign Up
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigate('/auth?role=admin')}
-                      className="text-foreground"
-                    >
-                      Admin Login
-                    </Button>
-                  </div>
+                  <></>
               )}
               
               {/* Search icon */}
