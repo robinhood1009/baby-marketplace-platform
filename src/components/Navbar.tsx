@@ -250,7 +250,7 @@ export const Navbar = () => {
                 className="h-8 w-auto"
                 loading="lazy"
               />
-              <span className="font-monoton text-2xl font-bold text-primary hidden sm:inline">
+              <span className="font-macondo text-2xl font-bold text-primary hidden sm:inline">
                 my-babydays
               </span>
             </div>

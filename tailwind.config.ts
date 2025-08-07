@@ -19,6 +19,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+                macondo: ['Macondo', 'cursive'],
                 monoton: ['Monoton', 'cursive'],
                 quicksand: ['Quicksand', 'sans-serif'],
 				sans: ['Outfit', 'system-ui', 'sans-serif'],
