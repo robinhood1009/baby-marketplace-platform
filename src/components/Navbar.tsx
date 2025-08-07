@@ -241,12 +241,16 @@ export const Navbar = () => {
 
             {/* Center: Logo */}
             <div 
-              className="cursor-pointer flex items-center"
+              className="cursor-pointer flex items-center gap-2"
               onClick={() => navigate('/')}
             >
-              <h1 className="text-2xl font-bold text-primary">
-                my-babydays
-              </h1>
+              <img 
+                src="/lovable-uploads/1c264e5a-4f8a-4c16-93c6-0046135fc899.png" 
+                alt="my-babydays logo"
+                className="h-8 w-auto"
+                loading="lazy"
+              />
+              <span className="text-xl font-bold text-primary hidden sm:inline">my-babydays</span>
             </div>
 
             {/* Right: Account menu and Search */}
