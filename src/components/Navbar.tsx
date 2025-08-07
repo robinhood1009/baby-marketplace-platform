@@ -250,7 +250,7 @@ export const Navbar = () => {
                 className="h-8 w-auto"
                 loading="lazy"
               />
-              <span className="text-xl font-bold text-primary font-logo hidden sm:inline">my-babydays</span>
+              <span className="text-xl font-bold text-primary hidden sm:inline">my-babydays</span>
             </div>
 
             {/* Right: Account menu and Search */}
