@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-
+import { Navbar } from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
@@ -34,9 +34,9 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-background font-outfit">
-      
+      <Navbar />
       <SidebarProvider>
-        <div className="min-h-screen flex w-full">
+        <div className="min-h-screen pt-16 flex w-full">
           <AdminSidebar />
           <SidebarInset>
             <header className="flex h-12 items-center gap-2 border-b px-4">
