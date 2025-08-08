@@ -18,6 +18,13 @@ import UsersAdmin from "./pages/admin/UsersAdmin";
 import VendorsAdmin from "./pages/admin/VendorsAdmin";
 import CategoriesAdmin from "./pages/admin/CategoriesAdmin";
 import MessagesAdmin from "./pages/admin/MessagesAdmin";
+import VendorLayout from "./pages/vendor/VendorLayout";
+import VendorDashboardNew from "./pages/vendor/VendorDashboard";
+import VendorOffers from "./pages/vendor/VendorOffers";
+import VendorAds from "./pages/vendor/VendorAds";
+import VendorAnalytics from "./pages/vendor/VendorAnalytics";
+import VendorProfile from "./pages/vendor/VendorProfile";
+import VendorBilling from "./pages/vendor/VendorBilling";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +51,14 @@ const App = () => (
               <Route path="vendors" element={<VendorsAdmin />} />
               <Route path="categories" element={<CategoriesAdmin />} />
               <Route path="messages" element={<MessagesAdmin />} />
+            </Route>
+            <Route path="/vendor" element={<VendorLayout />}>
+              <Route index element={<VendorDashboardNew />} />
+              <Route path="offers" element={<VendorOffers />} />
+              <Route path="ads" element={<VendorAds />} />
+              <Route path="analytics" element={<VendorAnalytics />} />
+              <Route path="profile" element={<VendorProfile />} />
+              <Route path="billing" element={<VendorBilling />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
