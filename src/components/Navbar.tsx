@@ -277,6 +277,16 @@ export const Navbar = () => {
                     <DropdownMenuItem onClick={() => navigate('/onboarding')}>
                       Profile
                     </DropdownMenuItem>
+                    {userRole === 'vendor' && (
+                      <DropdownMenuItem onClick={() => navigate('/vendor')}>
+                        Vendor Portal
+                      </DropdownMenuItem>
+                    )}
+                    {userRole === 'admin' && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        Admin Panel
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout
