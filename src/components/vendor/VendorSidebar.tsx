@@ -43,12 +43,12 @@ export function VendorSidebar() {
   };
 
   return (
-    <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible="icon">
-      <div className="flex items-center justify-between p-4 border-b border-border">
+    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible="icon">
+      <div className="flex items-center justify-between p-4 border-b border-border bg-card">
         {!collapsed && (
           <h2 className="font-semibold text-lg text-primary">Vendor Portal</h2>
         )}
-        <SidebarTrigger className="h-8 w-8" />
+        <SidebarTrigger className="h-8 w-8 bg-primary/10 hover:bg-primary/20" />
       </div>
 
       <SidebarContent>

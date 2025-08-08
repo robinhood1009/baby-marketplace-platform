@@ -6,10 +6,10 @@ import { ProtectedVendorRoute } from "@/components/vendor/ProtectedVendorRoute";
 export default function VendorLayout() {
   return (
     <ProtectedVendorRoute>
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
+      <SidebarProvider defaultOpen={true}>
+        <div className="min-h-screen flex w-full bg-background">
           <VendorSidebar />
-          <main className="flex-1 p-6 bg-muted/30">
+          <main className="flex-1 p-6 bg-muted/30 overflow-auto">
             <Outlet />
           </main>
         </div>
