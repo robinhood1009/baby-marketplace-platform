@@ -59,6 +59,13 @@ export type Database = {
             foreignKeyName: "ads_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
+            referencedRelation: "vendor_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ads_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
             referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
@@ -94,7 +101,21 @@ export type Database = {
             foreignKeyName: "brands_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
+            referencedRelation: "vendor_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brands_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_brands_vendor_id"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_public_info"
             referencedColumns: ["id"]
           },
           {
@@ -308,6 +329,13 @@ export type Database = {
             foreignKeyName: "fk_offers_vendor_id"
             columns: ["vendor_id"]
             isOneToOne: false
+            referencedRelation: "vendor_public_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_offers_vendor_id"
+            columns: ["vendor_id"]
+            isOneToOne: false
             referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
@@ -358,6 +386,13 @@ export type Database = {
           vendor_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_public_info"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_vendor_id_fkey"
             columns: ["vendor_id"]
@@ -413,7 +448,38 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      vendor_public_info: {
+        Row: {
+          brand_id: string | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          suspended: boolean | null
+        }
+        Insert: {
+          brand_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          suspended?: boolean | null
+        }
+        Update: {
+          brand_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          suspended?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
